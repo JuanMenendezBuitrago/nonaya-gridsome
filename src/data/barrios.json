@@ -1,0 +1,294 @@
+{
+    "Barcelona": {
+        "Ciutat Vella": [
+            "El Raval",
+            "Barri Gòtic",
+            "El Born",
+            "La Barceloneta"
+        ],
+        "Eixample": [
+            "Dreta de l'Eixample",
+            "Esquerra de l'Eixample",
+            "Sagrada Família",
+            "Sant Antoni"
+        ],
+        "Sants-Montjuïc": [
+            "Sants",
+            "Poble Sec",
+            "Montjuïc"
+        ],
+        "Les Corts": [
+            "Les Corts",
+            "La Maternitat i Sant Ramon"
+        ],
+        "Sarrià-Sant Gervasi": [
+            "Sarrià",
+            "Sant Gervasi - Galvany",
+            "Vallvidrera, el Tibidabo i les Planes"
+        ],
+        "Gràcia": [
+            "Vila de Gràcia",
+            "La Salut",
+            "Camp d'en Grassot i Gràcia Nova"
+        ],
+        "Horta-Guinardó": [
+            "Horta",
+            "Guinardó",
+            "Vall d'Hebron"
+        ],
+        "Nou Barris": [
+            "Vilapicina i la Torre Llobeta",
+            "Prosperitat",
+            "Trinitat Nova"
+        ],
+        "Sant Andreu": [
+            "Sant Andreu de Palomar",
+            "La Sagrera"
+        ],
+        "Sant Martí": [
+            "El Poblenou",
+            "Diagonal Mar i el Front Marítim del Poblenou",
+            "La Vila Olímpica del Poblenou"
+        ]
+    },
+    "Madrid": {
+        "Centro": [
+            "Palacio",
+            "Embajadores",
+            "Cortes",
+            "Justicia",
+            "Universidad"
+        ],
+        "Arganzuela": [
+            "Imperial",
+            "Acacias",
+            "Chopera",
+            "Legazpi",
+            "Delicias"
+        ],
+        "Retiro": [
+            "Pacífico",
+            "Adelfas",
+            "Estrella",
+            "Ibiza",
+            "Jerónimos"
+        ],
+        "Salamanca": [
+            "Recoletos",
+            "Goya",
+            "Fuente del Berro",
+            "Guindalera",
+            "Lista"
+        ],
+        "Chamartín": [
+            "El Viso",
+            "Prosperidad",
+            "Ciudad Jardín",
+            "Hispanoamérica",
+            "Nueva España"
+        ],
+        "Tetuán": [
+            "Bellas Vistas",
+            "Cuatro Caminos",
+            "Castillejos",
+            "Berruguete",
+            "Valdeacederas"
+        ],
+        "Chamberí": [
+            "Gaztambide",
+            "Arapiles",
+            "Trafalgar",
+            "Almagro",
+            "Ríos Rosas"
+        ],
+        "Fuencarral-El Pardo": [
+            "El Pardo",
+            "Fuentelarreina",
+            "Peñagrande",
+            "Barrio del Pilar",
+            "La Paz"
+        ],
+        "Moncloa-Aravaca": [
+            "Casa de Campo",
+            "Argüelles",
+            "Ciudad Universitaria",
+            "Valdezarza",
+            "Valdemarín"
+        ],
+        "Latina": [
+            "Los Cármenes",
+            "Puerta del Ángel",
+            "Lucero",
+            "Aluche",
+            "Campamento"
+        ],
+        "Carabanchel": [
+            "Comillas",
+            "Opañel",
+            "San Isidro",
+            "Vista Alegre",
+            "Puerta Bonita"
+        ],
+        "Usera": [
+            "Moscardó",
+            "Zofío",
+            "Pradolongo",
+            "Almendrales",
+            "Orcasitas"
+        ],
+        "Puente de Vallecas": [
+            "Entrevías",
+            "San Diego",
+            "Palomeras Bajas",
+            "Palomeras Sureste",
+            "Portazgo"
+        ],
+        "Moratalaz": [
+            "Pavones",
+            "Horcajo",
+            "Marroquina",
+            "Media Legua",
+            "Fontarrón"
+        ],
+        "Ciudad Lineal": [
+            "Ventas",
+            "Pueblo Nuevo",
+            "Quintana",
+            "La Concepción",
+            "San Pascual"
+        ],
+        "Hortaleza": [
+            "Palomas",
+            "Valdefuentes",
+            "Canillas",
+            "Pinar del Rey",
+            "Apóstol Santiago"
+        ],
+        "Villaverde": [
+            "San Andrés",
+            "San Cristóbal",
+            "Butarque",
+            "Los Rosales",
+            "Los Ángeles"
+        ],
+        "Villa de Vallecas": [
+            "Casco Histórico de Vallecas",
+            "Santa Eugenia",
+            "Ensanche de Vallecas",
+            "Casco Histórico de Vicálvaro",
+            "Valdebernardo"
+        ],
+        "Vicálvaro": [
+            "Casco Histórico de Vicálvaro",
+            "Valdebernardo",
+            "Valderrivas",
+            "El Cañaveral",
+            "Ensanche de San Blas"
+        ],
+        "San Blas-Canillejas": [
+            "Simancas",
+            "Hellín",
+            "Amposta",
+            "Arcos",
+            "Rosas"
+        ],
+        "Barajas": [
+            "Alameda de Osuna",
+            "Aeropuerto",
+            "Casco Histórico de Barajas",
+            "Timón",
+            "Corralejos"
+        ]
+    },
+    "Valencia": {
+        "Ciutat Vella": [
+            "El Carmen",
+            "La Xerea",
+            "El Mercat",
+            "Sant Francesc"
+        ],
+        "Eixample": [
+            "Russafa",
+            "El Pla del Remei",
+            "Gran Via",
+            "Ruzafa"
+        ],
+        "Extramurs": [
+            "Arrancapins",
+            "La Roqueta",
+            "El Botànic",
+            "La Petxina"
+        ],
+        "Campanar": [
+            "Campanar",
+            "Benicalap",
+            "Les Tendetes",
+            "Ciutat Fallera"
+        ],
+        "La Saïdia": [
+            "Marxalenes",
+            "Morvedre",
+            "Trinitat",
+            "La Zaidía"
+        ],
+        "Pla del Real": [
+            "Exposició",
+            "Mestalla",
+            "Jaume Roig",
+            "Ciutat Universitària"
+        ],
+        "Olivereta": [
+            "La Fonteta de Sant Lluís",
+            "Sant Llorenç",
+            "Tres Forques",
+            "La Llum"
+        ],
+        "Patraix": [
+            "Patraix",
+            "Sant Isidre",
+            "Vara de Quart",
+            "Safranar"
+        ],
+        "Jesús": [
+            "Jesús",
+            "La Raiosa",
+            "L'Hort de Senabre",
+            "Carpesa"
+        ],
+        "Quatre Carreres": [
+            "Montolivet",
+            "En Corts",
+            "Malilla",
+            "La Punta"
+        ],
+        "Poblats Marítims": [
+            "El Cabanyal-El Canyamelar",
+            "El Grau",
+            "Malva-rosa",
+            "Beteró"
+        ],
+        "Camins al Grau": [
+            "El Perellonet",
+            "El Palmar",
+            "Camins al Grau"
+        ],
+        "Algirós": [
+            "L'Illa Perduda",
+            "Ciutat Jardí",
+            "La Carrasca",
+            "L'Amistat"
+        ],
+        "Benimaclet": [
+            "Benimaclet",
+            "Camí de Vera",
+            "Benimaclet",
+            "Benimaclet"
+        ],
+        "Rascanya": [
+            "Benicalap",
+            "Orriols",
+            "Torrefiel",
+            "Sant Llorenç"
+        ]
+    }
+}
