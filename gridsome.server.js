@@ -56,6 +56,11 @@ module.exports = function (api) {
 
   api.createPages(({ createPage }) => {
     // Use the Pages API here: https://gridsome.org/docs/pages-api/
+    createPage({
+      path: `/list`,
+      component: './src/templates/List.vue',
+    });
+
     data.forEach(unit => {
       createPage({
         path: `/${slugify(String(unit.title))}`,

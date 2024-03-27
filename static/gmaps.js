@@ -26,7 +26,7 @@
         d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) 
     }
 )({
-        key: "YOUR_API_KEY_HERE",
+        key: "AIzaSyAe07pXQ3rJwS9gmryd82ipZNtm0bKYXtg",
     // Add other bootstrap parameters as needed, using camel case.
     // Use the 'v' parameter to indicate the version to load (alpha, beta, weekly, etc.)
     }

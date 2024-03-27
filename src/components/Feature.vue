@@ -78,7 +78,7 @@ export default {
     .wrapper{
         display: flex;
         justify-content: flex-start;
-        align-items:stretch;
+        align-items:center;
         margin-right: 15px;
         svg{
             width: 1.75rem;
@@ -91,6 +91,9 @@ export default {
     .icon{
         margin-right: 10px;
         height: 28px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .texts{
         display: flex;

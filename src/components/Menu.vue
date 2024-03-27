@@ -15,6 +15,7 @@
         </div>
         <div v-if="filters" class="filters">
             <DropdownButton icon="down" text="Contrato" :selected="true"/>
+            <SearchBox/>
             <DropdownButton icon="down" text="Tipo de inmueble" />
             <DropdownButton icon="down" text="Habitaciones"/>
             <DropdownButton icon="down" text="Baños"/>
@@ -33,14 +34,15 @@
 </template>
 
 <script>
-import ChevronDown from '~/components/icons/ChevronDown.vue';
-import Search      from '~/components/icons/Search.vue';
-import RentuosLogo from '~/components/RentuosLogo.vue';
+import ChevronDown    from '~/components/icons/ChevronDown.vue';   
+import Search         from '~/components/icons/Search.vue';
+import SearchBox      from '~/components/SearchBox.vue';
+import RentuosLogo    from '~/components/RentuosLogo.vue';
 import DropdownButton from '~/components/DropdownButton.vue';
 
 export default {
     components:{
-        ChevronDown, Search, DropdownButton, RentuosLogo
+        ChevronDown, Search, DropdownButton, RentuosLogo, SearchBox
     },
     props: {
         filters: {

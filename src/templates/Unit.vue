@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div class="unit">
         <Menu />
         <Media :pictures="$page.unit.pictures" />
         <div class="container">
-            <div class="main">
+            <div id="main">
                 <div id="unit-header">
                     <div class="first-line">
                         <div>
@@ -188,7 +188,7 @@ export default {
                 habs: 3,
                 bathrooms: 2,
                 m2: 150,
-                picture: "https://picsum.photos/200/300"
+                picture: "https://picsum.photos/200/300",
             }
         }
     },
@@ -254,18 +254,20 @@ export default {
 <style lang="scss">
 @import '~/assets/variables.scss';
 
-.container {
-    display: flex;
-    margin: 0 auto;
-    width: 75vw;
-    height: 100%;
-
-    .main {
-        flex: 2;
-    }
-
-    #sidebar {
-        flex: 1;
+.unit{
+    .container {
+        display: flex;
+        margin: 0 auto;
+        width: 75vw;
+        height: 100%;
+    
+        #main {
+            flex: 2;
+        }
+    
+        #sidebar {
+            flex: 1;
+        }
     }
 }
 
