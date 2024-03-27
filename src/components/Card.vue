@@ -23,7 +23,7 @@
             <div class="description">
                 {{ data.description }}
             </div>
-            <Button text="Contactar" active/>
+            <Button text="Contactar" active fullWidth/>
         </div>
     </div>
 </template>

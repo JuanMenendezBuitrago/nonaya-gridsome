@@ -1,8 +1,8 @@
 <template>
-    <div class="unit">
+    <div>
         <Menu />
         <Media :pictures="$page.unit.pictures" />
-        <div class="container">
+        <div id="unit-container">
             <div id="main">
                 <div id="unit-header">
                     <div class="first-line">
@@ -87,8 +87,8 @@
                 </div>
             </div>
         </div>
-        <div id="same-neighbourhood">
-            <div class="same-neighbourhood-header">
+        <div id="same-neighborhood">
+            <div class="same-neighborhood-header">
                 <h1 class="title">Inmuebles en Gracia</h1>
                 <div class="buttons">
                     <RoundButton icon="left" />
@@ -254,22 +254,22 @@ export default {
 <style lang="scss">
 @import '~/assets/variables.scss';
 
-.unit{
-    .container {
-        display: flex;
-        margin: 0 auto;
-        width: 75vw;
-        height: 100%;
-    
-        #main {
-            flex: 2;
-        }
-    
-        #sidebar {
-            flex: 1;
-        }
+
+#unit-container {
+    display: flex;
+    margin: 0 auto;
+    width: 75vw;
+    height: 100%;
+
+    #main {
+        flex: 2;
+    }
+
+    #sidebar {
+        flex: 1;
     }
 }
+
 
 
 #unit-header {
@@ -414,7 +414,7 @@ export default {
 }
 
 
-#same-neighbourhood, #history {
+#same-neighborhood, #history {
     font-size: 0.75rem;
     border-bottom: 1px solid $gray-light;
     padding-bottom: 60px;
@@ -427,7 +427,7 @@ export default {
         color: $gray-darkest;
     }
 
-    .same-neighbourhood-header, .history-header{
+    .same-neighborhood-header, .history-header{
         display: flex;
         justify-content: space-between;
     }

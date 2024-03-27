@@ -59,6 +59,9 @@ module.exports = function (api) {
     createPage({
       path: `/list`,
       component: './src/templates/List.vue',
+      context:{
+        neighborhood: true
+      }
     });
 
     data.forEach(unit => {

@@ -1,5 +1,5 @@
 <template>
-    <div class="button" :class="{flat, active}">
+    <div class="button" :class="{flat, active, 'full-width': fullWidth}">
         {{ text }}
     </div>
 </template>
@@ -12,6 +12,10 @@ export default {
             type: Boolean,
             required: false,
         },
+        fullWidth: {
+            type: Boolean,
+            required: false,
+        },        
         text: {
             type: String,
             required: true,
@@ -30,23 +34,24 @@ export default {
     @import '~/assets/variables.scss';
 
     .button{
-        width: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: center;
         padding: 0.5rem 0.8rem;
-
+        
         border-width: 1px;
         border-style:  solid;
         border-color: $gray;
         border-radius: 5px;
-
+        
         color: $gray;
         font-weight: 600;
-
+        
         cursor: pointer;
-
+        &.full-width{
+            width: 100%;
+        }
         &.flat{
             border: none;
         }

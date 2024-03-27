@@ -1,9 +1,9 @@
 <template>
-    <div class="button" :class="{flat, selected, withFilters: filterCount > 0}">
+    <div class="button-with-icon" :class="{flat, selected, simple, withFilters: filterCount > 0}">
         <Config v-if="icon=='filter'" style="margin-right: 0.5rem"/>
         <ArrowLeft v-if="icon=='left'" style="margin-right: 0.5rem"/>
         {{ text + (filterCount > 0 ? `(${filterCount})` : '') }}
-        <ArrowRight v-if="icon=='right'" style="margin-right: 0.5rem"/>
+        <ArrowRight v-if="icon=='right'" style="margin-left: 0.5rem"/>
         <ChevronDown v-if="icon=='down'" style="margin-left: 0.5rem" :selected="selected"/>
         <ChevronUp v-if="icon=='up'" style="margin-left: 0.5rem" selected="selected"/>
     </div>
@@ -25,6 +25,11 @@ export default {
         ArrowRight
     },
     props: {
+        simple: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
         flat: {
             type: Boolean,
             required: false,
@@ -33,6 +38,7 @@ export default {
         selected: {
             type: Boolean,
             required: false,
+            default: false
         },
         text: {
             type: String,
@@ -65,23 +71,28 @@ export default {
         }
     }
     
-    .button{
+    .button-with-icon{
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding: 0.3rem 0.8rem;
+
         border: 1px solid $gray;
         border-radius: 3px;
+
+        padding: 0.3rem 0.8rem;
         margin-right: 0.5rem;
         cursor: pointer;
+        color: $black;
 
-        &.flat{
-            border: none;
+        svg{
+            width: 1.25rem;
+            height: auto;
+            path{
+                fill: $black;
+            }
         }
 
-        &.withFilters{
-            font-weight: 600;
-        }
+        
         &.selected{
             border-color: $orange;
             background-color: $orange-light;
@@ -92,10 +103,19 @@ export default {
                 }
             }
         }
+        
+        &.flat{
+            border: none;
+        }
+        
+        &.simple{
+            background-color: transparent;
+        }
+        
+        &.withFilters{
+            font-weight: 600;
+        }
+        
     }
-
-    svg{
-        width: 1.25rem;
-        height: auto;
-    }
+    
 </styles>
