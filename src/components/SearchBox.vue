@@ -54,7 +54,6 @@ export default {
         padding: 0.3rem 0.5rem;
         border: 1px solid $gray-light;
         border-radius: 3px;
-        margin-right: 0.5rem;
         background-color: $gray-lighter;
 
         &.focus{
