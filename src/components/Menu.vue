@@ -54,12 +54,57 @@
         <!-- menu 2 -->
 
         <div v-if="filters" id="filters">
-            <ButtonWithIcon icon="down" text="Contrato" :selected="true"/>
+            <ButtonWithIcon 
+                icon="down" 
+                :text="contractText == '' ? 'Contrato' : contractText" 
+                :selected="contractText == '' ? false : true" 
+                reference="contract" 
+                @clicked="toggleModal('contract')">
+                <ContractModal activator="contract" @selectedValue="changeContractText"/>
+            </ButtonWithIcon>
+
             <SearchBox/>
-            <ButtonWithIcon icon="down" text="Tipo de inmueble" />
-            <ButtonWithIcon icon="down" text="Habitaciones"/>
-            <ButtonWithIcon icon="down" text="Baños"/>
-            <ButtonWithIcon icon="filter" text="Filtros" :filterCount="filterCount"/>
+            
+            <ButtonWithIcon 
+                icon="down" 
+                :text="kindText == '' ? 'Tipo de inmueble' : kindText" 
+                :selected="kindText == '' ? false : true" 
+                reference="kind" 
+                @clicked="toggleModal('kind')">
+                <KindModal activator="kind" @selectedValue="changeKindText"/>
+            </ButtonWithIcon>
+
+            <ButtonWithIcon 
+                icon="down" 
+                text="Precio" 
+                reference="price" 
+                @clicked="toggleModal('price')">
+                <PriceModal activator="price"/>
+            </ButtonWithIcon>
+
+            <ButtonWithIcon 
+                icon="down" 
+                text="Habitaciones" 
+                reference="bedrooms" 
+                @clicked="toggleModal('bedrooms')">
+                <BedroomsModal activator="bedrooms"/>
+            </ButtonWithIcon>
+
+            <ButtonWithIcon 
+                icon="down" 
+                text="Baños" 
+                reference="bathrooms" 
+                 @clicked="toggleModal('bathrooms')">
+                <BathroomsModal activator="bathrooms"/>
+            </ButtonWithIcon>
+
+            <ButtonWithIcon 
+                icon="filter" 
+                text="Filtros" 
+                :count="filterCount" 
+                reference="filters">
+                <Modal activator="filters"/>
+            </ButtonWithIcon>
         </div>
 
         <div v-else id="navigation-2"> 
@@ -76,16 +121,36 @@
 
 <script>
 import ChevronDown    from '~/components/icons/ChevronDown.vue';   
-import ChevronRight    from '~/components/icons/ChevronRight.vue';   
+import ChevronRight   from '~/components/icons/ChevronRight.vue';   
 import Search         from '~/components/icons/Search.vue';
-import Price         from '~/components/icons/Price.vue';
+import Price          from '~/components/icons/Price.vue';
 import SearchBox      from '~/components/SearchBox.vue';
 import RentuosLogo    from '~/components/RentuosLogo.vue';
+import Modal          from '~/components/Modal.vue';
+import ContractModal  from '~/components/modals/ContractModal.vue';
+import KindModal      from '~/components/modals/KindModal.vue';
+import BathroomsModal from '~/components/modals/BathroomsModal.vue';
+import BedroomsModal  from '~/components/modals/BedroomsModal.vue';
+import PriceModal     from '~/components/modals/PriceModal.vue';
 import ButtonWithIcon from '~/components/ButtonWithIcon.vue';
+
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
     components:{
-        ChevronDown, Search, ButtonWithIcon, RentuosLogo, SearchBox, ChevronRight, Price
+        ChevronDown, 
+        Search, 
+        ButtonWithIcon, 
+        RentuosLogo, 
+        SearchBox, 
+        ChevronRight, 
+        Price, 
+        Modal,
+        ContractModal,
+        BathroomsModal,
+        BedroomsModal,
+        KindModal,
+        PriceModal
     },
     props: {
         hero: {
@@ -99,9 +164,38 @@ export default {
             default: false
         }
     },
+
     data(){
         return {
-            filterCount: 1
+            filterCount: 1,
+            contractText: '',
+            kindText: ''
+        }
+    },
+
+    computed:{
+        ...mapGetters(['activeModal'])
+    },
+
+    methods: {
+        ...mapMutations(['setActiveModal']),
+
+        toggleModal(name) {
+            let activeModal = this.activeModal;
+            if(activeModal == name) {
+                this.setActiveModal('');
+            }
+            else{
+                this.setActiveModal(name);
+            }
+        },
+        changeKindText(text){
+            this.kindText = text;
+            this.setActiveModal('');
+        },
+        changeContractText(text){
+            this.contractText = text;
+            this.setActiveModal('');
         }
     }
 }
@@ -124,7 +218,9 @@ export default {
 
     #filters{
         justify-content: flex-start;
+        font-weight: 400;
         padding: 1.25rem;
+        column-gap: 0.5rem;
     }
 
     #hero{
@@ -281,16 +377,31 @@ export default {
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        cursor: pointer;
 
+        cursor: pointer;
+        
+        
         span{
+            transition: all .2s ease-in;
             display: flex;
             flex-direction: row;
             align-items: center;
             padding: 0.5rem 1rem;
-            
+
+            &:hover{
+                color: $orange;            
+                svg{
+                    path{
+                        fill: $orange;
+                    }
+                }
+            }
             svg{
                 margin-left: 0.5rem;
+                path{
+                    transition: all .2s ease-in;
+                    fill: $black;
+                }
             }
         }
     }
@@ -301,16 +412,28 @@ export default {
         justify-content: flex-end;
         align-items: center;
 
+        &:hover{
+            .button{
+                border-color: $orange;
+            }
+            a{
+                color: $orange;
+            }
+        }
         .button{
+            transition: all .2s ease-in;
             display: flex;
             flex-direction: row;
             align-items: center;
+
             padding: 0.5rem 1rem;
+            margin-right: 1.5rem;
+
             border: 1px solid $gray;
             border-radius: 3px;
-            margin-right: 1.5rem;
         }
         a{
+            transition: all .2s ease-in;
             text-decoration: none;
             color: inherit;
         }
