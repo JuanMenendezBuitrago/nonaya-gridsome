@@ -3,6 +3,7 @@
 
 import '~/assets/styles.scss'
 import DefaultLayout from '~/layouts/Default.vue'
+import store from './data/store' 
 
 export default function (Vue, { router, head, isClient }) {
   // head.script.push({
@@ -12,5 +13,7 @@ export default function (Vue, { router, head, isClient }) {
 
   // })
   // Set default layout as a global component
-  Vue.component('Layout', DefaultLayout)
+  Vue.component('Layout', DefaultLayout);
+  // Register Vuex store
+  Vue.prototype.$store = store
 }
