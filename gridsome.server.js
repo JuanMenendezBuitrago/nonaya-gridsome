@@ -18,7 +18,6 @@ module.exports = function (api) {
       let cost = item.renting ? item.renting_cost : (item.selling ? item.selling_cost : 'consultar');
       let contract = item.renting ? 'rent' : (item.selling ? 'sell' : 'consultar');
       let slug = slugify(String(item.title));
-      console.log(item.raw_status);
       collection.addNode({
         id: item.id,
         slug,
