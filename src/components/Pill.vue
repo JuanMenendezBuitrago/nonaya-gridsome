@@ -14,7 +14,6 @@ export default {
 
     computed : {
         text() {
-            console.log(this.content)
             if (this.content == 'reserved')
                 return 'Reservado';
             if (this.content == 'available')

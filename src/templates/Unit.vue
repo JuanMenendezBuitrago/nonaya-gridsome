@@ -243,11 +243,10 @@ export default {
 
     methods: {
         toggleShowMore() {
-            console.log('ping')
             this.showMore = this.showMore ? false : true;
-            console.log(this.showMore)
         }
     }
+
 }
 </script>
 
@@ -435,7 +434,6 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: stretch;
-        height: 275px;
     }
 
     .buttons{
@@ -460,7 +458,7 @@ export default {
     }
 
     form {
-        display: text;
+        display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: stretch;
