@@ -85,15 +85,14 @@ export default {
             font-size: 0.75rem;
             justify-content: flex-start;
             align-items: baseline;
+            column-gap: 0.5rem;
 
             &>svg {
                 align-self: center;
-                margin-right: 5px;
             }
 
             .button {
                 width: fit-content;
-                margin-left: 10px;
             }
         }
 
