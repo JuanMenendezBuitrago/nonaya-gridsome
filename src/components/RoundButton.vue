@@ -24,15 +24,25 @@ export default {
 </script>
 
 <style lang="scss">
+@import '~/assets/variables.scss';
     .circle{
         width:30px;
         height: 30px;
         border-radius: 50%;
-        box-shadow: 0 0 3px gray;;
+        margin-left: 5px;
+        box-shadow: 0 0 3px gray;
+
         display: flex;
         justify-content: center;
         align-items: center;
+
         cursor: pointer;
-        margin-left: 5px;
+        background-color: rgba(255, 255, 255 , 0.5);
+
+        svg{
+            path{
+                fill:$black;
+            }
+        }
     }
 </style>
