@@ -1,5 +1,5 @@
 <template>
-    <div class="button" :class="{flat, active, 'full-width': fullWidth}">
+    <div class="button" :class="{flat, active, 'full-width': fullWidth, solid, orange: solid}">
         {{ text }}
     </div>
 </template>
@@ -12,6 +12,10 @@ export default {
             type: Boolean,
             required: false,
         },
+        solid: {
+            type: Boolean,
+            required: false,
+        },        
         fullWidth: {
             type: Boolean,
             required: false,
@@ -47,15 +51,21 @@ export default {
         
         color: $gray;
         font-weight: 600;
+
+        width: max-content;
         
         cursor: pointer;
+
         &.full-width{
             width: 100%;
         }
         &.flat{
-            border: none;
+            border: none;       
         }
-
+        &.solid.orange{
+            background-color: $orange;
+            color: white;
+        }
         &.active{
             color: $orange;
             border-color: $orange;
