@@ -1,9 +1,27 @@
 <template>
-    <div class="card" :class="{sm: size=='sm', md: size=='md'}">
-        <div class="picture" :class="{grayscale: grayscale}" :style="{backgroundImage: `url(${data.picture})`}">
+    <div 
+        class="card" 
+        :class="{
+            'size-sm': size=='sm', 
+            'size-md': size=='md'
+        }">
+        <div 
+            class="picture" 
+            :class="{
+                rented,
+                grayscale, 
+                carrousel: !rented && pictures > 1,
+                last:      !rented && last ,
+                first:     !rented && first
+            }" 
+            :style="{backgroundImage: `url(${data.picture})`}">
+
             <Pill v-if="rented" content="Alquilado"/>
+            <RoundButton v-show="!rented && pictures > 1 && currentPictureIndex > 0" icon="left"/>
+            <RoundButton v-show="!rented && pictures > 1 && currentPictureIndex < (pictures - 1)" icon="right"/>
         </div>
-        <div class="text">
+
+        <div class="data">
             <h1 class="price">1.200€</h1>
             <div class="location">
                 <Location/> Piso en Carrer de Berga<br v-if="size=='sm'">
@@ -31,6 +49,7 @@
 <script>
 import Location from '~/components/icons/Location.vue';
 import Feature from '~/components/Feature.vue';
+import RoundButton from '~/components/RoundButton.vue';
 import Button from '~/components/Button.vue';
 import Pill from '~/components/Pill.vue';
 
@@ -39,6 +58,7 @@ export default {
         Location,
         Pill,
         Button,
+        RoundButton,
         Feature
     },
     props: {
@@ -58,6 +78,12 @@ export default {
         size: {
             type: String,
             required: false,
+        }
+    },
+
+    data(){
+        return{
+            currentPictureIndex : 0
         }
     },
 
@@ -86,6 +112,16 @@ export default {
             let result = amount + `<sup>${sup}</sup> piso`;
             return (result);
         },
+        pictures(){
+            return 3;
+            return this.data.pictures.length;
+        },
+        last(){
+            return this.currentPictureIndex == (this.pictures - 1) ;
+        },
+        first(){
+            return this.currentPictureIndex == 0;
+        }
     }
 }
 
@@ -97,7 +133,6 @@ export default {
 .card{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: stretch;
     border-radius: 5px;
     box-shadow: 0px 2px 3px rgb(200, 200, 200) ;
@@ -105,25 +140,32 @@ export default {
     font-size: 0.75rem;
 
     
-    &.sm{
+    &.size-sm{
         width: calc((75vw / 4) - 20px);
 
         .picture{
-            flex: 4;
+            height: 150px
         }
 
-        .text{
-            flex: 3;
+        .data{
+            min-height: 150px;
         }
     }
 
-    &.md{
+    &.size-md{
         width: calc((100% - 15px) / 2);
         height: 70vh;
         margin-bottom: 15px;
 
-        .picture, .text{
+        .picture{
+            height: 350px;
+        }
+        .data{
             flex: 1;
+        }
+
+        .description{
+            padding-bottom: 20px;
         }
 
         .features{
@@ -143,10 +185,25 @@ export default {
     }
 
     .picture{
-        display: flex;
-        justify-content: center;
-        align-items: center;
         background-size: cover;
+        padding: 10px;
+
+        &.carrousel{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            &.first{
+                justify-content: flex-end;
+            }
+            &.last{
+                justify-content: flex-start;
+            }
+        }
+        &.rented{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         &.grayscale{
             filter: grayscale(1);
         }
@@ -156,7 +213,8 @@ export default {
             margin: 0;
         }
     } 
-    .text{
+
+    .data{
         margin: 15px;
         display: flex;
         flex-direction: column;
@@ -193,4 +251,8 @@ export default {
     }
 }
 
+
+@media (max-width:481px) {
+
+}
 </style>
