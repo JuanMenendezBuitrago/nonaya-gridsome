@@ -7,8 +7,7 @@
     "explore": "gridsome explore"
   },
   "dependencies": {
-
-    "google-maps-api-loader": "^1.1.1",
+    "@googlemaps/js-api-loader": "^1.16.6",
     "gridsome": "^0.7.0",
     "gridsome-plugin-sass-resources-loader": "^0.0.3",
     "slugify": "^1.6.6",

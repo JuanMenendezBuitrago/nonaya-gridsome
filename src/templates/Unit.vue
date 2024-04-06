@@ -66,8 +66,8 @@
                 </div>
                 <div id="unit-location">
                     <h1 class="title">Ubicación aproximada</h1>
-                    <div class="placeholder">
-                        mapa
+                    <div class="placeholder" ref="mapContainer">
+                    
                     </div>
                 </div>
             </div>
@@ -144,7 +144,9 @@ query Unit($id: ID!) {
     floor,
     pictures,
     location{
-        town
+        town,
+        geo_lat,
+        geo_lng
     },
     energy{
         certificate_display,
@@ -166,7 +168,8 @@ import Card from '~/components/Card.vue';
 import Tag from '~/components/icons/Tag.vue';
 import RoundButton from '~/components/RoundButton.vue';
 
-import { store } from '~/data/store.js';
+import { Loader } from '@googlemaps/js-api-loader';
+
 
 export default {
     components: {
@@ -235,6 +238,7 @@ export default {
             let result = amount + `<sup>${sup}</sup> piso`;
             return (result);
         },
+        
         tipoContrato() {
             return this.$page.unit.contract == 'rent' ? 'l alquiler' : 'la venta';
         }
@@ -244,7 +248,30 @@ export default {
     methods: {
         toggleShowMore() {
             this.showMore = this.showMore ? false : true;
+        },
+
+        initMap() {
+            console.log(this.$page.unit.location.geo_lat)
+            console.log(this.$page.unit.location.geo_lng)
+            this.map = new google.maps.Map(this.$refs.mapContainer, {
+                center: { 
+                    lat: parseFloat(this.$page.unit.location.geo_lat), 
+                    lng: parseFloat(this.$page.unit.location.geo_lng) },
+                zoom: 15
+            });
         }
+    },
+
+    mounted() {
+        console.log('API KEY' + process.env.GRIDSOME_MAPS_API_KEY);
+        const loader = new Loader({
+            apiKey: process.env.GRIDSOME_MAPS_API_KEY,
+            version: 'weekly'
+        });
+
+        loader.load().then(() => {
+            this.initMap();
+        });
     }
 
 }

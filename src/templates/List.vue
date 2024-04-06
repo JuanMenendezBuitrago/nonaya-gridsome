@@ -16,7 +16,7 @@
                 <Card size="md" :data="cardData"></Card>
                 <Card size="md" :data="cardData"></Card>
             </div>
-            <div id="map">
+            <div id="map" ref="mapContainer">
 
             </div>
         </div>
@@ -25,11 +25,13 @@
 
 
 <script>
-import Sort from '~/components/icons/Sort.vue';
+import Sort           from '~/components/icons/Sort.vue';
 import ButtonWithIcon from '~/components/ButtonWithIcon.vue';
-import Menu from '~/components/Menu.vue';
-import Card from '~/components/Card.vue';
-import { store } from '~/data/store.js';
+import Menu           from '~/components/Menu.vue';
+import Card           from '~/components/Card.vue';
+
+import { Loader } from '@googlemaps/js-api-loader';
+
 
 export default {
     components: {
@@ -40,6 +42,7 @@ export default {
     },
     data() {
         return {
+            map: null,
             numUnits: 4,
             cardData: {
                 habs: 3,
@@ -50,6 +53,27 @@ export default {
                 description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, quis pariatur labore laudantium ducimus necessitatibus..."
             }
         }
+    },
+
+    methods: {
+        initMap() {
+            this.map = new google.maps.Map(this.$refs.mapContainer, {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 8
+            });
+        }
+    },
+
+    mounted() {
+        console.log('API KEY' + process.env.GRIDSOME_MAPS_API_KEY);
+        const loader = new Loader({
+            apiKey: process.env.GRIDSOME_MAPS_API_KEY,
+            version: 'weekly'
+        });
+
+        loader.load().then(() => {
+            this.initMap();
+        });
     }
 }
 </script>
