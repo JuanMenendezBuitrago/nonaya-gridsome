@@ -16,7 +16,9 @@
                 <Card size="md" :data="cardData"></Card>
                 <Card size="md" :data="cardData"></Card>
             </div>
-            <div id="map" ref="mapContainer">
+            <div id="map" >
+                <div ref="mapContainer">
+                </div>
 
             </div>
         </div>
@@ -87,6 +89,7 @@ export default {
     width: 100%;
     min-height: 100vh;
     align-items: stretch;
+    column-gap: 30px;
 
     #list-content {
         h1 {
@@ -129,8 +132,13 @@ export default {
 
     #map {
         flex: 1;
+        align-self: flex-start;
         position: sticky;
         top: 20px;
+
+        &>div{
+            height:90vh;
+        }
     }
 }
 </style>
