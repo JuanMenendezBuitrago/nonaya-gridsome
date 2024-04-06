@@ -238,7 +238,7 @@ export default {
             let result = amount + `<sup>${sup}</sup> piso`;
             return (result);
         },
-        
+
         tipoContrato() {
             return this.$page.unit.contract == 'rent' ? 'l alquiler' : 'la venta';
         }
@@ -263,7 +263,6 @@ export default {
     },
 
     mounted() {
-        console.log('API KEY' + process.env.GRIDSOME_MAPS_API_KEY);
         const loader = new Loader({
             apiKey: process.env.GRIDSOME_MAPS_API_KEY,
             version: 'weekly'

@@ -65,7 +65,6 @@ export default {
     },
 
     mounted() {
-        console.log('API KEY' + process.env.GRIDSOME_MAPS_API_KEY);
         const loader = new Loader({
             apiKey: process.env.GRIDSOME_MAPS_API_KEY,
             version: 'weekly'
@@ -130,6 +129,8 @@ export default {
 
     #map {
         flex: 1;
+        position: sticky;
+        top: 20px;
     }
 }
 </style>
