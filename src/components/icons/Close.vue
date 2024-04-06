@@ -11,3 +11,9 @@ export default {
   name: 'Close'
 }
 </script>
+
+<style lang="scss" scoped>
+  svg {
+    cursor: pointer;
+  }
+</style>

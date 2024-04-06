@@ -7,5 +7,16 @@
 module.exports = {
   siteName: 'Gridsome',
   plugins: [],
-  mode: 'development'
+  mode: 'development',
+  configureWebpack: {
+    module: {
+      rules: [
+        {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: "javascript/auto"
+        }
+      ] 
+    }
+  }
 }

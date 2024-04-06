@@ -1,14 +1,31 @@
 <template>
-    <div class="text-field" :class="{focus}">
-        <Search/>
-        <input type="text" v-model="text" @focus="focus=true" @blur="focus=false"/>
-        <Close/>
+    <div style="position: relative;">
+        <div 
+            class="text-field" 
+            :class="{isFocussed}"
+            :ref="reference">
+            <Search/>
+            <input 
+                type="text" 
+                placeholder="Busca por ciudad/barrio"
+                v-model="text" 
+                @focus="focus()" 
+                @blur="blur()"
+                @keydown.esc="blur()"/>
+            <Close 
+                v-if="query.length > 0"
+                @click.native="resetQuery"/>
+        </div>
+        <slot></slot>
     </div>
 </template>
 
 <script>
-import Close   from '~/components/icons/Close.vue';
+import Close    from '~/components/icons/Close.vue';
 import Search   from '~/components/icons/Search.vue';
+
+import { mapGetters, mapMutations } from 'vuex';
+
 
 export default {
     components:{
@@ -24,12 +41,75 @@ export default {
         selected: {
             type: Boolean,
             required: false,
+        },
+        reference: {
+            type: String,
+            required: false,
         }
     },
     data(){
         return{
-            text:"foo bar",
-            focus: false
+            text:"",
+            isFocussed: false,
+            searchOptions: {
+                shouldSort: true,
+                // tokenize: true,
+                // matchAllTokens: true,
+                includeMatches: true,
+                threshold: 0.3,
+                location: 0,
+                distance: 500,
+                maxPatternLength: 32,
+                minMatchCharLength: 1,
+                keys: ['town', 'province']
+            }
+        }
+    },
+
+    watch: {
+        text(newValue, oldValue) {
+            this.setQuery(newValue);
+            this.performSearch();
+        }
+    },
+
+    computed:{
+        ...mapGetters(['query'])
+    },
+
+    methods:{
+        ...mapMutations(['setQuery', 'setQueryResults']),
+        
+        focus(){
+            this.isFocussed = true;
+            this.$emit('focussed');
+        },
+
+        blur() {
+            this.isFocussed = false;
+            this.$emit('blured');
+        },
+
+        resetQuery() {
+            this.text = '';
+        },
+
+        performSearch() {
+            this.$search(this.query, this.$realStateData, this.searchOptions)
+                .then(results => {
+                    let unique = results.reduce((accumulator, current) => {
+                        const duplicateIndex = accumulator.findIndex(item => {
+                            return item.item.town === current.item.town && item.item.province === current.item.province
+                        });
+                        
+                        if (duplicateIndex === -1) {
+                            accumulator.push(current);
+                        } 
+                        
+                        return accumulator;
+                    }, []);
+                    this.setQueryResults(unique)
+                });
         }
     }
 

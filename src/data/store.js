@@ -18,6 +18,10 @@ export default new Vuex.Store({
     maxPrice: 0,
     showMinPrice: false,
     minPrice: 0,
+    query:'',
+    queryResults: '',
+    city:'',
+    neighborhood: ''
   },
   mutations: {
     // Define your mutations here
@@ -55,6 +59,22 @@ export default new Vuex.Store({
 
     setShowMinPrice(state, payload){
         state.showMinPrice = payload;
+    },
+
+    setQuery(state, payload){
+        state.query = payload;
+    },
+
+    setQueryResults(state, payload){
+        state.queryResults = payload;
+    },
+
+    setCity(state, payload){
+        state.city = payload;
+    },
+
+    setNeighborhood(state, payload){
+        state.neighborhood = payload;
     }
   },
 
@@ -96,6 +116,22 @@ export default new Vuex.Store({
     
     showMinPrice(state, getters){
         return state.showMinPrice;
-    },    
+    }, 
+    
+    query(state, getters){
+        return state.query;
+    }, 
+
+    queryResults(state, getters){
+        return state.queryResults;
+    } , 
+
+    city(state, getters){
+        return state.city;
+    } , 
+
+    neighborhood(state, getters){
+        return state.neighborhood;
+    } 
   }
 })

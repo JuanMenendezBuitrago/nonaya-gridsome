@@ -30,7 +30,7 @@ export default{
             required: false,
             default: false
         },        
-        show:{
+        show:{  
             type: Boolean,
             required: false,
             default: false
@@ -53,7 +53,15 @@ export default{
         }
     },
     mounted() {
-        this.top = this.$parent.$parent.$refs[this.activator].offsetHeight;
+        let currentParent = this.$parent;
+        
+        while (currentParent != null) {
+            if (currentParent.$refs && currentParent.$refs[this.activator]) {
+                this.top = currentParent.$refs[this.activator].offsetHeight;
+                return;
+            }
+            currentParent = currentParent.$parent;
+        }
     }
 
 }

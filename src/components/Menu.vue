@@ -63,7 +63,12 @@
                 <ContractModal activator="contract" @selectedValue="changeContractText"/>
             </ButtonWithIcon>
 
-            <SearchBox/>
+            <SearchBox
+                @focussed="showModal('search')"
+                @blured="hideModal()"
+                reference="search">
+               <SearchResultsModal activator="search"/> 
+            </SearchBox>
             
             <ButtonWithIcon 
                 icon="down" 
@@ -94,7 +99,7 @@
                 icon="down" 
                 text="Baños" 
                 reference="bathrooms" 
-                 @clicked="toggleModal('bathrooms')">
+                @clicked="toggleModal('bathrooms')">
                 <BathroomsModal activator="bathrooms"/>
             </ButtonWithIcon>
 
@@ -120,23 +125,26 @@
 </template>
 
 <script>
-import ChevronDown    from '~/components/icons/ChevronDown.vue';   
-import ChevronRight   from '~/components/icons/ChevronRight.vue';   
-import Search         from '~/components/icons/Search.vue';
-import Price          from '~/components/icons/Price.vue';
-import SearchBox      from '~/components/SearchBox.vue';
-import RentuosLogo    from '~/components/RentuosLogo.vue';
-import Modal          from '~/components/Modal.vue';
-import ContractModal  from '~/components/modals/ContractModal.vue';
-import KindModal      from '~/components/modals/KindModal.vue';
-import BathroomsModal from '~/components/modals/BathroomsModal.vue';
-import BedroomsModal  from '~/components/modals/BedroomsModal.vue';
-import PriceModal     from '~/components/modals/PriceModal.vue';
-import ButtonWithIcon from '~/components/ButtonWithIcon.vue';
+import ChevronDown          from '~/components/icons/ChevronDown.vue';   
+import ChevronRight         from '~/components/icons/ChevronRight.vue';   
+import Search               from '~/components/icons/Search.vue';
+import Price                from '~/components/icons/Price.vue';
+import SearchBox            from '~/components/SearchBox.vue';
+import RentuosLogo          from '~/components/RentuosLogo.vue';
+import Modal                from '~/components/Modal.vue';
+import ContractModal        from '~/components/modals/ContractModal.vue';
+import SearchResultsModal   from '~/components/modals/SearchResultsModal.vue';
+import KindModal            from '~/components/modals/KindModal.vue';
+import BathroomsModal       from '~/components/modals/BathroomsModal.vue';
+import BedroomsModal        from '~/components/modals/BedroomsModal.vue';
+import PriceModal           from '~/components/modals/PriceModal.vue';
+import ButtonWithIcon       from '~/components/ButtonWithIcon.vue';
 
 import { mapGetters, mapMutations } from 'vuex';
 
 export default {
+
+
     components:{
         ChevronDown, 
         Search, 
@@ -144,6 +152,7 @@ export default {
         RentuosLogo, 
         SearchBox, 
         ChevronRight, 
+        SearchResultsModal,
         Price, 
         Modal,
         ContractModal,
@@ -174,11 +183,19 @@ export default {
     },
 
     computed:{
-        ...mapGetters(['activeModal'])
+        ...mapGetters(['activeModal', 'searchQuery'])
     },
 
     methods: {
         ...mapMutations(['setActiveModal']),
+
+        showModal(name){
+            this.setActiveModal(name);
+        },
+
+        hideModal(){
+            this.setActiveModal('');
+        },
 
         toggleModal(name) {
             let activeModal = this.activeModal;
