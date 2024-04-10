@@ -1,12 +1,16 @@
 <template>
     <div id="pictures">
-        <div class="photo1" :style="{backgroundImage: `url('${pictures[0]}')`}">
-            <div><Camera/>{{ pictures.length }} Fotos</div>
+        <div class="photo1" :style="{backgroundImage: `url('${pictures[0]}')`}" @click="$emit('clickedPicture',0)">
+            <div 
+                id="show-gallery" 
+                @click.stop="$emit('clickedPicture',-1)">
+                    <Camera/>{{ pictures.length }} Fotos
+            </div>
         </div>
-        <div class="photo2" :style="{backgroundImage: `url('${pictures[1]}')`}"></div>
-        <div class="photo3" :style="{backgroundImage: `url('${pictures[2]}')`}"></div>
-        <div class="photo4" :style="{backgroundImage: `url('${pictures[3]}')`}"></div>
-        <div class="photo5" :style="{backgroundImage: `url('${pictures[4]}')`}">
+        <div class="photo2" :style="{backgroundImage: `url('${pictures[1]}')`}"@click="$emit('clickedPicture',1)"></div>
+        <div class="photo3" :style="{backgroundImage: `url('${pictures[2]}')`}"@click="$emit('clickedPicture',2)"></div>
+        <div class="photo4" :style="{backgroundImage: `url('${pictures[3]}')`}"@click="$emit('clickedPicture',3)"></div>
+        <div class="photo5" :style="{backgroundImage: `url('${pictures[4]}')`}"@click="$emit('clickedPicture',4)">
             <div>
                 + {{ pictures.length - 5 }} fotos
             </div>
@@ -32,6 +36,10 @@ export default {
 </script>
 
 <style  lang="scss">
+@import '~/assets/variables.scss';
+
+
+
 #pictures {
     margin-bottom: 50px;
     display: grid;
@@ -44,22 +52,28 @@ export default {
     width: 100%;
     height: 65vh;
 
-    .photo1 {
-        grid-area: photo1;
-        display: flex;
-        justify-content: flex-start;
-        align-items: flex-end;
-        div{
-            display: inline-flex;
-            align-items: center;
-            margin: 0 0 15px 12vw;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: white;
-            border-radius: 5px;
-            padding: 10px;
-            background-color: rgba(0,0,0,0.5);
+    #show-gallery{
+        transition: all .2s ease-in;
+        display: inline-flex;
+        align-items: center;
+        margin: 0 0 15px 12vw;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: white;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: rgba(0,0,0,0.5);
+
+        &:hover{
+            cursor: pointer;
+            color: $orange;
+            background-color: rgba(255, 255, 255, 0.5);
+            path{
+                fill: $orange
+            }
         }
+
+
         svg{
             margin-bottom: 5px;
             margin-right: 5px;
@@ -67,6 +81,14 @@ export default {
                 fill: #fff;
             }
         }
+    }
+
+    .photo1 {
+        grid-area: photo1;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-end;
+        
     }
 
     .photo2 {
@@ -103,6 +125,7 @@ export default {
     .photo5 {
         background-size: cover;
         background-position: center;
+        cursor: pointer;
     }
 
 }
