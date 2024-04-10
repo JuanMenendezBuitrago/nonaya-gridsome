@@ -1,6 +1,6 @@
 <template>
-    <div class="wrapper">
-        <div class="icon">
+    <div class="feature-wrapper">
+        <div class="feature-icon">
             <Floor v-if="icon=='floor'"/>
             <Area v-if="icon=='area'"/>
             <Room v-if="icon=='room'"/>
@@ -75,11 +75,11 @@ export default {
 
 <style lang="scss">
 @import '~/assets/variables.scss';
-    .wrapper{
+    .feature-wrapper{
         display: flex;
         justify-content: flex-start;
         align-items:center;
-        margin-right: 15px;
+
         svg{
             width: 1.75rem;
             height:auto;
@@ -88,8 +88,8 @@ export default {
             }
         }
     }
-    .icon{
-        margin-right: 10px;
+    .feature-icon{
+        margin-right: 3px;
         height: 28px;
         display: flex;
         justify-content: center;
@@ -97,6 +97,7 @@ export default {
     }
     .texts{
         display: flex;
+        white-space: nowrap;
         flex-direction: column;
         align-items: flex-start;
         justify-content: center;
