@@ -3,15 +3,23 @@
         <div class="dropdown-button" 
             :class="{ flat, selected, simple, withFilters: count > 0 }" 
             :ref="reference"
-            @click.stop="emitEvent('clicked')">
-            <Config v-if="icon == 'filter'" style="margin-right: 0.5rem" />
-            <ArrowLeft v-if="icon == 'left'" style="margin-right: 0.5rem" />
+            @click.stop="$emit('clicked', reference)">
+            <Config     
+                v-if="icon == 'filter'" />
+            <ArrowLeft  
+                v-if="icon == 'left'" />
+
             {{ text + (count > 0 ? `(${count})` : '') }}
-            <ArrowRight v-if="icon == 'right'" style="margin-left: 0.5rem" />
-            <ChevronDown v-if="icon == 'down'" style="margin-left: 0.5rem" :selected="selected" />
-            <ChevronUp v-if="icon == 'up'" style="margin-left: 0.5rem" selected="selected" />
+
+            <ArrowRight  
+                v-if="icon == 'right'" />
+            <ChevronDown 
+                v-if="icon == 'down'" 
+                selected="selected" />
+            <ChevronUp   
+                v-if="icon == 'up'" 
+                selected="selected" />
         </div>
-        <slot></slot>
     </div>
 </template>
 
@@ -23,11 +31,7 @@ import ArrowRight  from '~/components/icons/ArrowRight.vue';
 import ArrowLeft   from '~/components/icons/ArrowLeft.vue';
 
 export default {
-    data(){
-        return {
-            top:0,
-        }
-    },
+
     components: {
         ChevronDown,
         ChevronUp,
@@ -72,12 +76,6 @@ export default {
                 return ['down', 'up', 'left', 'right', 'filter'].includes(value);
             }
         }
-    },
-
-    methods:{
-        emitEvent(type)  {
-            this.$emit(type);
-        }
     }
 }
 </script>
@@ -100,6 +98,9 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+
+    white-space: nowrap;
+    column-gap: 0.5rem;
 
     border: 1px solid $gray;
     border-radius: 3px;
