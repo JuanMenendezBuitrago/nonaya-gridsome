@@ -1,7 +1,7 @@
 <template>
     <div>
         <Menu />
-        <Media :pictures="$page.unit.pictures" />
+        <Media :pictures="$page.unit.pictures" @clickedPicture="showPicture"/>
         <div id="unit-container">
             <div id="main">
                 <div id="unit-header">
@@ -96,10 +96,10 @@
                 </div>
             </div>
             <div class="cards">
-                <Card size="sm" :data="data"></Card>
-                <Card size="sm" :data="data"></Card>
-                <Card size="sm" :data="data"></Card>
-                <Card size="sm" :data="data"></Card>
+                <Card size="sm" :cardData="cardData"></Card>
+                <Card size="sm" :cardData="cardData"></Card>
+                <Card size="sm" :cardData="cardData"></Card>
+                <Card size="sm" :cardData="cardData"></Card>
             </div>
         </div>
 
@@ -118,13 +118,14 @@
             </div>
 
             <div class="cards">
-                <Card size="sm" :data="data" rented grayscale></Card>
-                <Card size="sm" :data="data" rented grayscale></Card>
-                <Card size="sm" :data="data" rented grayscale></Card>
-                <Card size="sm" :data="data" rented grayscale></Card>
+                <Card size="sm" :cardData="cardData" rented grayscale></Card>
+                <Card size="sm" :cardData="cardData" rented grayscale></Card>
+                <Card size="sm" :cardData="cardData" rented grayscale></Card>
+                <Card size="sm" :cardData="cardData" rented grayscale></Card>
             </div>
         </div>   
-        <Footer :unit="$page.unit"/>     
+        <Footer :unit="$page.unit"/>
+        <Gallery :pictures="$page.unit.pictures" v-if="showGallery" :indexStart="galleryIndexStart" @closeMe="closeGallery"/>    
     </div>
 </template>
 
@@ -159,20 +160,23 @@ query Unit($id: ID!) {
 
 
 <script>
-import Menu from '~/components/Menu.vue';
-import Footer from '~/components/Footer.vue';
-import Media from '~/components/Media.vue';
-import Feature from '~/components/Feature.vue';
-import Pill from '~/components/Pill.vue';
-import Card from '~/components/Card.vue';
-import Tag from '~/components/icons/Tag.vue';
+
+import Gallery     from '~/components/Gallery.vue';
+import Menu        from '~/components/Menu.vue';
+import Footer      from '~/components/Footer.vue';
+import Media       from '~/components/Media.vue';
+import Feature     from '~/components/Feature.vue';
+import Pill        from '~/components/Pill.vue';
+import Card        from '~/components/Card.vue';
+import Tag         from '~/components/icons/Tag.vue';
 import RoundButton from '~/components/RoundButton.vue';
 
-import { Loader } from '@googlemaps/js-api-loader';
+import { Loader }  from '@googlemaps/js-api-loader';
 
 
 export default {
     components: {
+        Gallery,
         Menu,
         Media,
         Feature,
@@ -185,8 +189,39 @@ export default {
 
     data() {
         return {
+            galleryIndexStart: 0,
+            showGallery: false,
             maxWords: 100,
             showMore: false,
+            cardData: {
+                habs: 3,
+                bathrooms: 2,
+                m2: 150,
+                floor: 3,
+                pictures: [
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-8eaf9fa1.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-04f0ed44.jpg",   
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-a6954179.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-b733e4e4.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-25738f25.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-25e3cbdb.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-44275a4f.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-86f7f991.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-38cea40f.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-d9915573.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-c6a23989.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-7c298f27.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-cd7827e1.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-4c79ba54.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-d1f61ebb.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-6f5476ad.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-543e0dfe.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-4b6ff1ab.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-17b9ac2a.jpg",
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-dedf2440.jpg"
+                ],
+                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, quis pariatur labore laudantium ducimus necessitatibus..."
+            },
             data: {
                 habs: 3,
                 bathrooms: 2,
@@ -251,14 +286,37 @@ export default {
         },
 
         initMap() {
-            console.log(this.$page.unit.location.geo_lat)
-            console.log(this.$page.unit.location.geo_lng)
             this.map = new google.maps.Map(this.$refs.mapContainer, {
                 center: { 
                     lat: parseFloat(this.$page.unit.location.geo_lat), 
                     lng: parseFloat(this.$page.unit.location.geo_lng) },
                 zoom: 15
             });
+
+            // Define circle options
+            const circleOptions = {
+                strokeWeight: 0,
+                fillColor: "0000AA",
+                fillOpacity: 0.25,
+                map: this.map,
+                center: { 
+                    lat: parseFloat(this.$page.unit.location.geo_lat), 
+                    lng: parseFloat(this.$page.unit.location.geo_lng) 
+                },
+                radius: 500 // Example radius in meters
+            };
+
+            // Create circle
+            const circle = new google.maps.Circle(circleOptions);
+        },
+
+        closeGallery() {
+            this.showGallery = false;
+        },
+
+        showPicture(index) {
+            this.galleryIndexStart = index;
+            this.showGallery       = true;
         }
     },
 
