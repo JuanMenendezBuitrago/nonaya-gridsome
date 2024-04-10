@@ -1,5 +1,5 @@
 <template>
-    <span class="circle">
+    <span class="circle" :class="{visible: show}" @click="$emit('clicked')">
         <ChevronRight v-if="icon=='right'"/>
         <ChevronLeft  v-if="icon=='left'"/>
     </span>
@@ -18,7 +18,13 @@ export default {
     props: {
         icon: {
             required: true
+        },
+        show:{
+            type: Boolean,
+            required: false,
+            default: true,
         }
+        
     }
 }
 </script>
@@ -35,7 +41,11 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        visibility: hidden;
 
+        &.visible{
+            visibility: visible;
+        }
         cursor: pointer;
         background-color: rgba(255, 255, 255 , 0.5);
 
