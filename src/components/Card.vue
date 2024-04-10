@@ -1,24 +1,41 @@
 <template>
-    <div 
-        class="card" 
-        :class="{
+    <div :class="{
+            'card'   : true,
             'size-sm': size=='sm', 
             'size-md': size=='md'
         }">
-        <div 
-            class="picture" 
-            :class="{
-                rented,
-                grayscale, 
-                carrousel: !rented && pictures > 1,
-                last:      !rented && last ,
-                first:     !rented && first
-            }" 
-            :style="{backgroundImage: `url(${data.picture})`}">
+        <div class="pictures-frame" ref="frame">
+            <div :class="{
+                    'pictures-ui': true,
+                    'carrousel-buttons': !rented && pictureCount > 1,
+                    'rented'   : rented,
+                    'last'     : !rented && last ,
+                    'first'    : !rented && first
+                }">
+    
+                <Pill        v-if="rented" content="Alquilado"/>
+                <RoundButton v-show="!rented && pictureCount > 1 && currentPictureIndex > 0" icon="left"                   @clicked="decreaseIndex"/>
+                <RoundButton v-show="!rented && pictureCount > 1 && currentPictureIndex < (pictureCount - 1)" icon="right" @clicked="increaseIndex"/>
+            </div>
 
-            <Pill v-if="rented" content="Alquilado"/>
-            <RoundButton v-show="!rented && pictures > 1 && currentPictureIndex > 0" icon="left"/>
-            <RoundButton v-show="!rented && pictures > 1 && currentPictureIndex < (pictures - 1)" icon="right"/>
+            <div class="pictures-flex-wrapper">
+                <div :class="{
+                        'pictures-flex-row': true,
+                        'grayscale': grayscale
+                     }"
+                     :style="{
+                        transform: `translateX(${-currentPictureIndex*frameWidth}px)`
+                     }" >
+                    <div  v-for="(picture,i) in pictures" :key="`pic${i}`"
+                          class="picture"
+                         :style="{width: `${frameWidth}px`, height: `${frameHeight}px`}">
+                        <img 
+                             :src="picture" 
+                             :style="{width: `${frameWidth}px`, height: `${frameHeight}px`}"
+                             alt="" >
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="data">
@@ -28,18 +45,18 @@
                 Vila de Gràcia, Barcelona
             </div>
             <div v-if="size=='sm'" class="features">
-                <span>{{ data.habs }} habs.</span>
-                <span>{{ data.bathrooms }} baños</span>
-                <span>{{ data.m2 }}m<sup>2</sup></span>
+                <span>{{ cardData.habs }} habs.</span>
+                <span>{{ cardData.bathrooms }} baños</span>
+                <span>{{ cardData.m2 }}m<sup>2</sup></span>
             </div>
             <div v-if="size=='md'" class="features">
-                <Feature icon="room" :line1="bedrooms" />
+                <Feature icon="room"     :line1="bedrooms" />
                 <Feature icon="bathroom" :line1="bathrooms" />
-                <Feature icon="area" :line1="area" />
-                <Feature icon="floor" :line1="floor" />
+                <Feature icon="area"     :line1="area" />
+                <Feature icon="floor"    :line1="floor" />
             </div>
             <div class="description">
-                {{ data.description }}
+                {{ cardData.description }}
             </div>
             <Button text="Contactar" active fullWidth/>
         </div>
@@ -47,11 +64,11 @@
 </template>
 
 <script>
-import Location from '~/components/icons/Location.vue';
-import Feature from '~/components/Feature.vue';
+import Location    from '~/components/icons/Location.vue';
+import Feature     from '~/components/Feature.vue';
 import RoundButton from '~/components/RoundButton.vue';
-import Button from '~/components/Button.vue';
-import Pill from '~/components/Pill.vue';
+import Button      from '~/components/Button.vue';
+import Pill        from '~/components/Pill.vue';
 
 export default {
     components : {
@@ -63,65 +80,105 @@ export default {
     },
     props: {
         rented:{
-            type: Boolean,
+            type:     Boolean,
             required: false,
-            default: false,
+            default:  false,
         },        
+
         grayscale:{
-            type: Boolean,
+            type:     Boolean,
             required: false,
-            default: false,
+            default:  false,
         },
-        data:{
+
+        cardData:{
             required: true
         },
+
         size: {
-            type: String,
+            type:     String,
             required: false,
         }
     },
 
     data(){
         return{
-            currentPictureIndex : 0
+            pictures: [],
+            currentPictureIndex : 0,
+            frameHeight: 0,
+            frameWidth: 0
         }
     },
 
     computed: {
         bedrooms() {
-            let amount = this.data.habs;
+            let amount = this.cardData.habs;
             let result = amount + ' hab' + (amount > 1 ? 's.' : '.');
             return (result);
         },
 
         bathrooms() {
-            let amount = this.data.bathrooms;
+            let amount = this.cardData.bathrooms;
             let result = amount + ' baño' + (amount > 1 ? 's' : '');
             return (result);
         },
 
         area() {
-            let amount = this.data.m2;
+            let amount = this.cardData.m2;
             let result = `${amount}m<sup>2</sup>`;
             return (result);
         },
 
         floor() {
-            let amount = this.data.floor;
+            let amount = this.cardData.floor;
             let sup = (amount == 1 || amount == 3) ? 'er' : 'o';
             let result = amount + `<sup>${sup}</sup> piso`;
             return (result);
         },
-        pictures(){
-            return 3;
-            return this.data.pictures.length;
+
+        pictureCount(){
+            return this.cardData.pictures.length;
         },
+
         last(){
             return this.currentPictureIndex == (this.pictures - 1) ;
         },
+
         first(){
             return this.currentPictureIndex == 0;
         }
+    },
+
+    methods: {
+        handleCarrousel() {            
+            this.frameHeight = this.$refs.frame.clientHeight;
+            this.frameWidth  = this.$refs.frame.clientWidth;
+            this.pictures = this.cardData.pictures;
+
+        },
+        increaseIndex() {
+            if (this.currentPictureIndex < this.pictures.length - 1)
+                this.currentPictureIndex++;
+        },
+        decreaseIndex() {
+            if (this.currentPictureIndex > 0)
+                this.currentPictureIndex--;
+        }
+    },
+
+    mounted() {
+        // Add event listener for window resize event
+        window.addEventListener('resize', this.handleCarrousel);
+        window.addEventListener('load', this.handleCarrousel);
+
+        this.handleCarrousel()
+
+    },
+
+    beforeDestroy() {
+        // Remove event listener when component is destroyed
+        window.removeEventListener('resize', this.handleCarrousel);
+        window.removeEventListener('load', this.handleCarrousel);
     }
 }
 
@@ -134,6 +191,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+
     border-radius: 5px;
     box-shadow: 0px 2px 3px rgb(200, 200, 200) ;
     overflow: hidden;
@@ -143,23 +201,37 @@ export default {
     &.size-sm{
         width: calc((75vw / 4) - 20px);
 
-        .picture{
+        .pictures-frame{
             height: 150px
+        }
+
+        .picture{
+            width: calc((75vw / 4) - 20px);
         }
 
         .data{
             min-height: 150px;
         }
+
+        .description{
+            display: none;
+        }
     }
 
     &.size-md{
         width: calc((100% - 15px) / 2);
+        
         height: 70vh;
         margin-bottom: 15px;
 
-        .picture{
-            height: 350px;
+        .pictures-frame{
+            flex: 1;
         }
+
+        .picture{
+            width: calc((100% - 15px) / 2);
+        }
+
         .data{
             flex: 1;
         }
@@ -172,7 +244,7 @@ export default {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            .wrapper{
+            .frame{
                 margin-right: 0;
             }
             .icon{
@@ -184,35 +256,81 @@ export default {
         }
     }
 
+    .pictures-frame{
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .pictures-flex-row{
+        transition: transform 0.3s ease;
+
+        max-width: max-content;
+
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
     .picture{
-        background-size: cover;
+        img{
+            object-fit: cover;
+        }
+    }
+
+    .pictures-flex-wrapper{
+        position: absolute;
+        z-index: 50;
+        top   : 0;
+        left  : 0;
+        bottom: 0;
+        right : 0;
+
+        overflow: hidden;
+    }
+
+    .pictures-ui{
+        position: absolute;
+        z-index: 100;
+        top   : 0;
+        left  : 0;
+        bottom: 0;
+        right : 0;
+
         padding: 10px;
 
-        &.carrousel{
+        &.carrousel-buttons{
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             &.first{
                 justify-content: flex-end;
             }
+
             &.last{
                 justify-content: flex-start;
             }
         }
+
         &.rented{
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        &.grayscale{
-            filter: grayscale(1);
-        }
+
+
+
         .pill{
             background-color: $black;
             color: white;
             margin: 0;
         }
     } 
+
+    .grayscale{
+        filter: grayscale(1);
+    }
 
     .data{
         margin: 15px;
@@ -252,7 +370,10 @@ export default {
 }
 
 
-@media (max-width:481px) {
-
+@media (max-width:430px) {
+    .card.size-md{
+        width: 100% !important;
+        height: 50vh;
+    }
 }
 </style>
