@@ -1,7 +1,7 @@
 <template>
-    <div class="button" :class="{flat, active, 'full-width': fullWidth, solid, orange: solid}">
+    <a class="button" :class="{flat, active, 'full-width': fullWidth, solid, orange: solid}">
         {{ text }}
-    </div>
+    </a>
 </template>
 
 <script>
@@ -62,9 +62,11 @@ export default {
         &.flat{
             border: none;       
         }
-        &.solid.orange{
+        &.solid.orange,
+        &:hover,
+        &:active{
             background-color: $orange;
-            color: white;
+            color: white  !important;
         }
         &.active{
             color: $orange;
