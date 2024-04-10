@@ -2,14 +2,12 @@
 // The Client API can be used here. Learn more: gridsome.org/docs/client-api
 
 import '~/assets/styles.scss'
-import DefaultLayout from '~/layouts/Default.vue';
 import store         from './data/store' ;
 import VueFuse       from 'vue-fuse';
 import data          from './data/house.json';
 
 export default function (Vue, { router, head, isClient }) {
   Vue.use(VueFuse);
-  Vue.component('Layout', DefaultLayout);
   Vue.directive('click-outside', {
     bind: function (el, binding, vnode) {
       el.clickOutsideEvent = function (event) {
