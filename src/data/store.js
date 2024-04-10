@@ -14,6 +14,7 @@ export default new Vuex.Store({
     bedrooms: 0,
     bathrooms: 0,
     activeModal: '',
+    scrolledPixels: 0,
     showMaxPrice: false,
     maxPrice: 0,
     showMinPrice: false,
@@ -21,7 +22,8 @@ export default new Vuex.Store({
     query:'',
     queryResults: '',
     city:'',
-    neighborhood: ''
+    neighborhood: '',
+    touchDelta: 0
   },
   mutations: {
     // Define your mutations here
@@ -39,6 +41,10 @@ export default new Vuex.Store({
     
     setBathrooms(state, payload){
         state.bathrooms = payload;
+    },
+
+    setScrolledPixels(state, payload){
+        state.scrolledPixels = payload;
     },
 
     setActiveModal(state, payload){
@@ -75,7 +81,11 @@ export default new Vuex.Store({
 
     setNeighborhood(state, payload){
         state.neighborhood = payload;
-    }
+    },
+
+    setTouchDelta(state, payload){
+        state.touchDelta = payload;
+    }    
   },
 
   actions: {
@@ -86,6 +96,9 @@ export default new Vuex.Store({
     // Define your getters here
     activeModal(state, getters){
         return state.activeModal;
+    },
+    scrolledPixels(state, getters){
+        return state.scrolledPixels;
     },
     contract(state, getters){
         return state.contract;
@@ -132,6 +145,10 @@ export default new Vuex.Store({
 
     neighborhood(state, getters){
         return state.neighborhood;
+    } , 
+
+    touchDelta(state, getters){
+        return state.touchDelta;
     } 
   }
 })
