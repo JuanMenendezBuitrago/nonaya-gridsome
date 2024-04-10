@@ -74,11 +74,11 @@ export default {
     },
 
     computed:{
-        ...mapGetters(['query'])
+        ...mapGetters(['query', 'city', 'neighborhood'])
     },
 
     methods:{
-        ...mapMutations(['setQuery', 'setQueryResults']),
+        ...mapMutations(['setQuery', 'setQueryResults','setCity', 'setNeighborhood']),
         
         focus(){
             this.isFocussed = true;
@@ -92,6 +92,14 @@ export default {
 
         resetQuery() {
             this.text = '';
+            this.setQuery('');
+            this.resetLocation();
+
+        },
+
+        resetLocation() {
+            this.setCity('');
+            this.setNeighborhood('');
         },
 
         performSearch() {
