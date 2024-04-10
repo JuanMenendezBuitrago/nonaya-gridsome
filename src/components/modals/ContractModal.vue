@@ -15,6 +15,7 @@ import BaseModal        from './BaseModal.vue';
 import { mapMutations } from 'vuex';
 
 export default {
+    name: 'ContractModal',
     components: {
         BaseModal
     },
@@ -61,6 +62,7 @@ export default {
 
 .modal-list-item{
     padding: calc(5px + 0.3rem) calc(10px + 0.8rem);
+    font-size: 0.8rem;
     cursor: pointer;
 
     &:hover{
