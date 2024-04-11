@@ -1,5 +1,5 @@
 <template>
-    <div v-if="show || isActive"
+    <div
         :style="top && left ? { top: top + 'px', left: scrolledLeft + 'px' } : {}"
         :class="{show: (show || isActive), modal: true, 'hide-overflow': hideOverflow }">
 
@@ -44,13 +44,14 @@ export default {
     data() {
         return {
             top: 0,
-            left: 0
+            left: 0,
+            scrollStart: 0
         }
     },
 
     watch: {
         isActive(newVal, oldVal) {
-            this.scrollStart = this.scrolledPixels;
+            this.scrollStart = this.scrolledPixels || 0;
             if(newVal === true) {
                 this.setCoordinates();
             }
@@ -67,6 +68,9 @@ export default {
         },
         
         scrolledLeft() {
+            console.log('scrolledPixels: ' + this.scrolledPixels )
+            console.log('scrollStart: ' + this.scrollStart)
+            console.log('scrolledLeft: ' + this.left - (this.scrolledPixels - this.scrollStart))
             return this.left - (this.scrolledPixels - this.scrollStart);
         }
     },
@@ -79,7 +83,7 @@ export default {
             while (currentParent != null) {
 
                 if (currentParent.$refs && currentParent.$refs[this.activator]) {
-                    console.log(currentParent.$refs[this.activator].$el);
+                    console.log(currentParent.$refs[this.activator].$el.getBoundingClientRect().left);
                     this.top = currentParent.$refs[this.activator].$el.getBoundingClientRect().bottom + window.scrollY;
                     this.left = currentParent.$refs[this.activator].$el.getBoundingClientRect().left;
                     return;
@@ -90,8 +94,7 @@ export default {
     },
 
     mounted() {
-        this.top  = 0;
-        this.left = 0;
+        this.setCoordinates();
     }
 }
 </script>

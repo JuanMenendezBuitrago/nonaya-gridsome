@@ -77,7 +77,7 @@ export default {
 @import '~/assets/variables.scss';
     .feature-wrapper{
         display: flex;
-        justify-content: flex-start;
+        justify-content: space-between;
         align-items:center;
 
         svg{
@@ -89,12 +89,12 @@ export default {
         }
     }
     .feature-icon{
-        margin-right: 3px;
         height: 28px;
         display: flex;
         justify-content: center;
         align-items: center;
     }
+
     .texts{
         display: flex;
         white-space: nowrap;
@@ -103,8 +103,10 @@ export default {
         justify-content: center;
         font-size: 0.75rem;
         line-height: 0.75rem;
+
         &.two-rows{
             justify-content: space-between;
+            row-gap: 3px;
 
             .line1{
                 color: $gray-darker;
@@ -113,6 +115,19 @@ export default {
         .line2{
             font-weight: 600;
             font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width:430px) {
+        .feature-wrapper{
+            .texts{
+                font-size: 0.8rem;
+                line-height: normal;
+                column-gap: 6px;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+            }
         }
     }
 </style>

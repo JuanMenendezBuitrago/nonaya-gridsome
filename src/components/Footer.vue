@@ -65,4 +65,20 @@ footer {
     }
 
 }
+
+
+@media (max-width:430px) {
+    footer{
+        padding-bottom: 0;
+    }
+    .footer-content{
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        row-gap: 10px;
+        &>div{
+            row-gap: 10px;
+        }
+    }
+}
 </style>

@@ -375,5 +375,10 @@ export default {
         width: 100% !important;
         height: 50vh;
     }
+
+    .card.size-sm{
+        width: 55vw !important;
+        height: 30vh;
+    }
 }
 </style>

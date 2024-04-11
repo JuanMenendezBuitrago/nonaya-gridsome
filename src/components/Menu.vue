@@ -126,15 +126,17 @@
                 reference="filters"/>
             </div>
         </div>
+
         <div v-else id="navigation-2">
             <div class="left">
-                <ButtonWithIcon icon="left" text="Volver" selected />
+                <ButtonWithIcon icon="left" text="Volver" />
             </div>
             <div class="right">
-                <ButtonWithIcon icon="left" text="Anterior" selected simple flat />
-                <ButtonWithIcon icon="right" text="Siguiente" selected simple flat />
+                <ButtonWithIcon icon="left" text="Anterior" simple flat />
+                <ButtonWithIcon icon="right" text="Siguiente" simple flat />
             </div>
         </div>
+
         <div id="modals">
                 <ContractModal activator="contract" @selectedValue="changeContractText" />
                 <SearchResultsModal activator="search" />
@@ -251,12 +253,17 @@ export default {
 
     mounted() {
         const filtersWrapper = this.$refs['filters-wrapper'];
-        filtersWrapper.addEventListener('scroll', this.handleScrollX);
+        if(filtersWrapper){
+            filtersWrapper.addEventListener('scroll', this.handleScrollX);
+        }
 
     },
 
     beforeDestroy() {
-        filters.removeEventListener('scroll', this.handleScrollX);
+        const filtersWrapper = this.$refs['filters-wrapper'];
+        if(filtersWrapper){
+            filtersWrapper.removeEventListener('scroll', this.handleScrollX);
+        ç}
     }
 
 }
@@ -548,14 +555,29 @@ export default {
 
 /* For screens smaller than 430px  */
 @media (max-width: 430px) {
-    #navigation,
-    #search-box-2,
-    #hero{
-        display: none;
-    }
-    #filters-1{ 
-        display: flex;
+    .app-list{
+        #navigation,
+        #search-box-2,
+        #hero{
+            display: none;
+        }
+        #filters-1{ 
+            display: flex;
+        }
     }
 
+    .app-detail{
+        #navigation,
+        #search-box-2,
+        #hero,
+        #filters-1
+        #sear-box-1{ 
+            display: none;
+        }
+
+        #navigation-2{
+            padding-bottom: 0;
+        }
+    }
 }
 </style>

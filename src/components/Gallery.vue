@@ -1,5 +1,5 @@
 <template>
-    <div id="gallery-overlay"">
+    <div id="gallery-overlay">
         <div id="back">
             <ButtonWithIcon icon="left" text="Volver" @clicked="closeMe"/>
         </div>
@@ -111,6 +111,7 @@ export default {
         position: absolute;   
         top: 15px;
         left: 15px;
+        font-size: 0.8rem;
 
         .dropdown-button{
             color: white;

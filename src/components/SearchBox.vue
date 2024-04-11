@@ -1,34 +1,24 @@
 <template>
-    <div style="position: relative;">
-        <div 
-            class="text-field" 
-            :class="{isFocussed}"
-            :ref="reference">
-            <Search/>
-            <input 
-                type="text" 
-                placeholder="Busca por ciudad/barrio"
-                v-model="text" 
-                @focus="focus()" 
-                @blur="blur()"
-                @keydown.esc="blur()"/>
-            <Close 
-                v-if="query.length > 0"
-                @click.native="resetQuery"/>
+    <div class="input-text" style="position: relative;">
+        <div class="text-field" :class="{ isFocussed }" :ref="reference">
+            <Search />
+            <input type="text" placeholder="Busca por ciudad/barrio" v-model="text" @focus="focus()" @blur="blur()"
+                @keydown.esc="blur()" />
+            <Close v-if="query.length > 0" @click.native="resetQuery" />
         </div>
         <slot></slot>
     </div>
 </template>
 
 <script>
-import Close    from '~/components/icons/Close.vue';
-import Search   from '~/components/icons/Search.vue';
+import Close from '~/components/icons/Close.vue';
+import Search from '~/components/icons/Search.vue';
 
 import { mapGetters, mapMutations } from 'vuex';
 
 
 export default {
-    components:{
+    components: {
         Close,
         Search
     },
@@ -47,9 +37,9 @@ export default {
             required: false,
         }
     },
-    data(){
-        return{
-            text:"",
+    data() {
+        return {
+            text: "",
             isFocussed: false,
             searchOptions: {
                 shouldSort: true,
@@ -73,14 +63,14 @@ export default {
         }
     },
 
-    computed:{
+    computed: {
         ...mapGetters(['query', 'city', 'neighborhood'])
     },
 
-    methods:{
-        ...mapMutations(['setQuery', 'setQueryResults','setCity', 'setNeighborhood']),
-        
-        focus(){
+    methods: {
+        ...mapMutations(['setQuery', 'setQueryResults', 'setCity', 'setNeighborhood']),
+
+        focus() {
             this.isFocussed = true;
             this.$emit('focussed');
         },
@@ -109,11 +99,11 @@ export default {
                         const duplicateIndex = accumulator.findIndex(item => {
                             return item.item.town === current.item.town && item.item.province === current.item.province
                         });
-                        
+
                         if (duplicateIndex === -1) {
                             accumulator.push(current);
-                        } 
-                        
+                        }
+
                         return accumulator;
                     }, []);
                     this.setQueryResults(unique)
@@ -125,16 +115,21 @@ export default {
 </script>
 
 <styles lang="scss">
-    @import '~/assets/variables.scss';
-    .left, .right{
+@import '~/assets/variables.scss';
+
+.input-text {
+
+
+    .left,
+    .right {
         svg {
-            path{
+            path {
                 fill: $orange;
             }
         }
     }
-    
-    .text-field{
+
+    .text-field {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -144,17 +139,17 @@ export default {
         border-radius: 3px;
         background-color: $gray-lighter;
 
-        &.focus{
+        &.focus {
             border-color: $orange;
             background-color: $orange-light;
 
-            input{
+            input {
                 background-color: $orange-light;
                 color: $orange;
             }
 
-            svg{
-                path{
+            svg {
+                path {
                     fill: $orange;
                 }
             }
@@ -174,20 +169,22 @@ export default {
             }
         }
 
-        &.selected{
+        &.selected {
             border-color: $orange;
             background-color: $orange-light;
             color: $orange;
+
             svg {
-                path{
+                path {
                     fill: $orange;
                 }
             }
         }
     }
 
-    svg{
+    svg {
         width: 1.25rem;
         height: auto;
     }
+}
 </styles>

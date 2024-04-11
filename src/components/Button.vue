@@ -1,6 +1,7 @@
 <template>
     <a class="button" :class="{flat, active, 'full-width': fullWidth, solid, orange: solid}">
         {{ text }}
+        <slot></slot>
     </a>
 </template>
 

@@ -83,14 +83,7 @@ export default {
 <styles scoped lang="scss">
 @import '~/assets/variables.scss';
 
-.left,
-.right {
-    svg {
-        path {
-            fill: $orange;
-        }
-    }
-}
+
 
 .dropdown-button {
     transition: all .2s ease-in;
@@ -152,5 +145,17 @@ export default {
         font-weight: 600;
     }
 
+    &:hover,
+    &.active{
+        border-color: $orange;
+        .left,
+        .right {
+            svg {
+                path {
+                    fill: $orange;
+                }
+            }
+        }
+    }
 }
 </styles>

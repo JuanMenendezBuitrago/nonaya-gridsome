@@ -1,7 +1,11 @@
 <template>
-    <div>
+    <div class="app-detail">
         <Menu />
-        <Media :pictures="$page.unit.pictures" @clickedPicture="showPicture"/>
+
+        <Media v-if="isMobile" :single="true" :pictures="$page.unit.pictures" @clickedPicture="showPicture" />
+
+        <Media :single="false" :pictures="$page.unit.pictures" @clickedPicture="showPicture" />
+
         <div id="unit-container">
             <div id="main">
                 <div id="unit-header">
@@ -30,14 +34,22 @@
                     <h3 class="town">
                         {{ $page.unit.location.town }}
                     </h3>
+
+                    <div v-if="isMobile" id="unit-location">
+                        <div class="placeholder" ref="mapContainer">
+
+                        </div>
+                    </div>
+
                     <div class="description"
                         v-html="(descriptionPieces > 1 && !showMore ? cutDescription[0] + '...' : cutDescription[0] + cutDescription[1])">
                     </div>
 
                     <span class="showMore" @click="toggleShowMore()"
-                        v-html="showMore ? 'Leer menos' : 'Leer más'"></span>
+                        v-html="showMore ? 'Mostrar menos' : 'Leer más'"></span>
 
                 </div>
+
                 <div id="unit-features">
                     <h1 class="title">Caracterísiticas</h1>
                     <Feature icon="kind" line1="Tipo de inmueble" :line2="$page.unit.kind" />
@@ -49,7 +61,7 @@
                     <Feature icon="energy" line1="Consumo de energía"
                         :line2="$page.unit.energy.consumption + 'Mw h m<sup>2</sup>/año'" />
 
-                    <div class="pills">
+                    <div id="pills">
                         <Pill content="Armarios" />
                         <Pill content="Parquet" />
                         <Pill content="Electrodomésticos" />
@@ -58,35 +70,31 @@
                         <Pill content="Microondas" />
                     </div>
                 </div>
+
                 <div id="unit-conditions">
                     <h1 class="title">Condiciones de{{ tipoContrato }}</h1>
                     <Feature icon="euro" line1="Fianza" line2="foo" />
                     <Feature icon="hourglass" line1="Tipo de contrato" line2="bar" />
                     <Feature icon="paw" line1="Admite mascotas" line2="foo" />
                 </div>
-                <div id="unit-location">
+
+                <div v-if="!isMobile" id="unit-location">
                     <h1 class="title">Ubicación aproximada</h1>
                     <div class="placeholder" ref="mapContainer">
-                    
+
                     </div>
                 </div>
+
             </div>
+
+            <!-- sidebar -->
+
             <div id="sidebar">
-                <div class="form">
-                    <h2>¡Quiero visitarlo!</h2>
-                    <form action="">
-                        <input type="text" placeholder="Nombre">
-                        <input type="text" placeholder="Email">
-                        <input type="text" placeholder="Teléfono con Whatsapp">
-                        <textarea style="width:100%;" placeholder="Mensaje"></textarea>
-                        <a href="" class="button">Contactar</a>
-                        <div class="result">Hemos recibido tu solicitud de visita. Nos pondremos
-                            en contacto contigo para organizar una visita al piso
-                            siguiendo el orden de las solicitudes recibidas.</div>
-                    </form>
-                </div>
+                <Contact/>
             </div>
+
         </div>
+
         <div id="same-neighborhood">
             <div class="same-neighborhood-header">
                 <h1 class="title">Inmuebles en Gracia</h1>
@@ -95,11 +103,13 @@
                     <RoundButton icon="right" />
                 </div>
             </div>
-            <div class="cards">
-                <Card size="sm" :cardData="cardData"></Card>
-                <Card size="sm" :cardData="cardData"></Card>
-                <Card size="sm" :cardData="cardData"></Card>
-                <Card size="sm" :cardData="cardData"></Card>
+            <div class="cards-overflow">
+                <div class="cards">
+                    <Card size="sm" :cardData="cardData"></Card>
+                    <Card size="sm" :cardData="cardData"></Card>
+                    <Card size="sm" :cardData="cardData"></Card>
+                    <Card size="sm" :cardData="cardData"></Card>
+                </div>
             </div>
         </div>
 
@@ -107,9 +117,9 @@
             <div class="history-header">
                 <h1 class="title">Viviendas alquiladas recientemente en Gracia
                     <div class="history-subheader">
-                    En este momento, no disponemos de más viviendas que coincidan con tus preferencias.<br>
-                    Sin embargo, te mostramos algunas opciones que han sido alquiladas recientemente.
-                </div>
+                        En este momento, no disponemos de más viviendas que coincidan con tus preferencias.<br>
+                        Sin embargo, te mostramos algunas opciones que han sido alquiladas recientemente.
+                    </div>
                 </h1>
                 <div class="buttons">
                     <RoundButton icon="left" />
@@ -117,15 +127,24 @@
                 </div>
             </div>
 
-            <div class="cards">
-                <Card size="sm" :cardData="cardData" rented grayscale></Card>
-                <Card size="sm" :cardData="cardData" rented grayscale></Card>
-                <Card size="sm" :cardData="cardData" rented grayscale></Card>
-                <Card size="sm" :cardData="cardData" rented grayscale></Card>
+            <div class="cards-overflow">
+                <div class="cards">
+                    <Card size="sm" :cardData="cardData" rented grayscale></Card>
+                    <Card size="sm" :cardData="cardData" rented grayscale></Card>
+                    <Card size="sm" :cardData="cardData" rented grayscale></Card>
+                    <Card size="sm" :cardData="cardData" rented grayscale></Card>
+                </div>
             </div>
-        </div>   
-        <Footer :unit="$page.unit"/>
-        <Gallery :pictures="$page.unit.pictures" v-if="showGallery" :indexStart="galleryIndexStart" @closeMe="closeGallery"/>    
+        </div>
+
+        <Footer :unit="$page.unit" />
+
+        <div v-if="isMobile" id="contact">
+            <Button solid fullWidth>Contactar</Button>
+        </div>
+
+        <Gallery :pictures="$page.unit.pictures" v-if="showGallery" :indexStart="galleryIndexStart"
+            @closeMe="closeGallery" />
     </div>
 </template>
 
@@ -170,8 +189,10 @@ import Pill        from '~/components/Pill.vue';
 import Card        from '~/components/Card.vue';
 import Tag         from '~/components/icons/Tag.vue';
 import RoundButton from '~/components/RoundButton.vue';
+import Button      from '~/components/Button.vue';
+import Contact     from '~/components/Contact.vue';
 
-import { Loader }  from '@googlemaps/js-api-loader';
+import { Loader } from '@googlemaps/js-api-loader';
 
 
 export default {
@@ -184,11 +205,15 @@ export default {
         Tag,
         Card,
         RoundButton,
-        Footer
+        Footer,
+        Button,
+        Contact
     },
 
     data() {
         return {
+            screenHeight: 0,
+            screenWidth: 0,
             galleryIndexStart: 0,
             showGallery: false,
             maxWords: 100,
@@ -200,7 +225,7 @@ export default {
                 floor: 3,
                 pictures: [
                     "https://witei-media.s3.amazonaws.com/pics/3941900-8eaf9fa1.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-04f0ed44.jpg",   
+                    "https://witei-media.s3.amazonaws.com/pics/3941900-04f0ed44.jpg",
                     "https://witei-media.s3.amazonaws.com/pics/3941900-a6954179.jpg",
                     "https://witei-media.s3.amazonaws.com/pics/3941900-b733e4e4.jpg",
                     "https://witei-media.s3.amazonaws.com/pics/3941900-25738f25.jpg",
@@ -231,6 +256,10 @@ export default {
         }
     },
     computed: {
+        isMobile() {
+            return this.screenWidth > 0 && this.screenWidth < 431
+        },
+
         cutDescription() {
             let text = this.$page.unit.description.replace(/\n/g, '<br>');
             let words = text.split(' ');
@@ -287,9 +316,10 @@ export default {
 
         initMap() {
             this.map = new google.maps.Map(this.$refs.mapContainer, {
-                center: { 
-                    lat: parseFloat(this.$page.unit.location.geo_lat), 
-                    lng: parseFloat(this.$page.unit.location.geo_lng) },
+                center: {
+                    lat: parseFloat(this.$page.unit.location.geo_lat),
+                    lng: parseFloat(this.$page.unit.location.geo_lng)
+                },
                 zoom: 15
             });
 
@@ -299,9 +329,9 @@ export default {
                 fillColor: "0000AA",
                 fillOpacity: 0.25,
                 map: this.map,
-                center: { 
-                    lat: parseFloat(this.$page.unit.location.geo_lat), 
-                    lng: parseFloat(this.$page.unit.location.geo_lng) 
+                center: {
+                    lat: parseFloat(this.$page.unit.location.geo_lat),
+                    lng: parseFloat(this.$page.unit.location.geo_lng)
                 },
                 radius: 500 // Example radius in meters
             };
@@ -316,7 +346,12 @@ export default {
 
         showPicture(index) {
             this.galleryIndexStart = index;
-            this.showGallery       = true;
+            this.showGallery = true;
+        },
+
+        updateDimensions() {
+            this.screenWidth = window.innerWidth;
+            this.screenHeight = window.innerHeight;
         }
     },
 
@@ -329,6 +364,13 @@ export default {
         loader.load().then(() => {
             this.initMap();
         });
+
+        this.updateDimensions();
+        window.addEventListener('resize', this.updateDimensions);
+    },
+
+    beforeDestroy() {
+        window.removeEventListener('resize', this.updateDimensions);
     }
 
 }
@@ -352,8 +394,6 @@ export default {
         flex: 1;
     }
 }
-
-
 
 #unit-header {
     display: flex;
@@ -402,7 +442,12 @@ export default {
         display: flex;
         justify-content: flex-start;
         align-items: flex-start;
+        column-gap: 30px;
         margin: 10px 0;
+
+        svg {
+            margin-right: 6px;
+        }
     }
 }
 
@@ -413,8 +458,9 @@ export default {
     justify-content: space-between;
     align-content: flex-start;
     border-bottom: 1px solid $gray-light;
-    padding-bottom: 30px;
+    padding-bottom: 15px;
     margin-bottom: 30px;
+    row-gap: 15px;
 
     h1 {
         width: 100%;
@@ -425,14 +471,20 @@ export default {
         margin: 10px 0;
     }
 
-    .pills {
-        width: 100%;
-        margin-top: 2.5rem;
-        display: flex;
-        flex-wrap: wrap;
-        align-content: flex-start;
+    .feature-wrapper {
+        width: 30%;
         justify-content: flex-start;
+        column-gap: 6px;
     }
+}
+
+#pills {
+    width: 100%;
+    margin-top: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
 }
 
 #unit-content {
@@ -468,6 +520,7 @@ export default {
     border-bottom: 1px solid $gray-light;
     padding-bottom: 30px;
     margin-bottom: 30px;
+    row-gap: 15px;
 
     h1 {
         width: 100%;
@@ -497,30 +550,33 @@ export default {
 }
 
 
-#same-neighborhood, #history {
+#same-neighborhood,
+#history {
     font-size: 0.75rem;
     border-bottom: 1px solid $gray-light;
     padding-bottom: 60px;
     width: 75vw;
     margin: 30px auto;
 
-    .history-subheader{
+    .history-subheader {
         font-size: 0.75rem;
         font-weight: normal;
         color: $gray-darkest;
     }
 
-    .same-neighborhood-header, .history-header{
+    .same-neighborhood-header,
+    .history-header {
         display: flex;
         justify-content: space-between;
     }
+
     .cards {
         display: flex;
         justify-content: space-between;
         align-items: stretch;
     }
 
-    .buttons{
+    .buttons {
         display: flex;
         justify-content: flex-end;
         align-items: flex-end;
@@ -536,65 +592,111 @@ export default {
 #sidebar {
     margin-left: 3rem;
 
-    h2 {
-        text-align: center;
-        margin-top: 0;
-    }
+    
+}
 
-    form {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        font-size: 0.75rem;
 
-    }
-
-    input,
-    textarea,
-    .button,
-    .result {
-        padding: 10px;
+@media (max-width:430px) {
+    #unit-container,
+    #history,
+    #same-neighborhood,
+    #pictures-grid {
+        width: 100vw;
+        padding: 0 1.5rem;
+        border-bottom: none;
         margin-bottom: 10px;
-        border-radius: 5px;
-        border: none;
-        font-size: inherit;
-        color: $black;
+    }
 
-        &:focus {
-            outline: none;
-            -webkit-box-shadow: none;
-            box-shadow: none;
-        }
+    #unit-features,
+    #unit-conditions {
+        border-bottom: none;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
 
-        &::placeholder {
-            color: $black;
+        .feature-wrapper {
+            width: 100%;
+            justify-content: flex-start;
+            column-gap: 6px;
         }
     }
 
-    .result {
-        margin-bottom: 0;
-        padding-bottom: 0;
+    #pills {
+        margin-top: 1rem;
     }
 
-    .button {
+    #unit-content {
+        border-bottom: none;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    #sidebar {
+        display: none;
+    }
+
+    .cards-overflow{
+        width: 100%;
+        overflow-x: scroll;
+        overflow-y: visible;
+        padding: 5px;
+    }
+    .cards {
         display: flex;
-        justify-content: center;
-        color: white;
-        font-weight: 500;
-        background-color: $orange;
-        text-decoration: none;
-        margin: 0;
+        flex-direction: row;
+        column-gap: 6px;
+        width: max-content;
     }
 
-    .form {
-        background-color: $blue-light;
-        padding: 25px;
-        margin-left: 15px;
-        border-radius: 15px;
+    .app-detail {
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
+
+        #menu {
+            order: -2;
+        }
+
+        #unit-container {
+            order: -1;
+        }
+
+        #pictures-grid {
+            order: 0;
+        }
+
+        #pictures-single {
+            order: -1;
+        }
+    }
+
+    #unit-location {
+        border-bottom: none;
+        padding-bottom: 15px;
+        margin-bottom: 0;
+
+        .placeholder {
+            height: 25vh;
+        }
+    }
+
+    .same-neighborhood-header,
+    .history-header{
+        .buttons {
+            display: none !important;
+        }
+    }
+    .history-subheader {
+        display: none;
+    }
+
+    #contact {
+        background-color: white;
+        padding: 15px;
+        position: sticky;
+        bottom: 0;
+        z-index: 5000;
+        box-shadow: none;
+        -moz-box-shadow: none;
+        -webkit-box-shadow: none;
     }
 }
 </style>
