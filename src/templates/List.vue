@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="app-list">
         <div>
             <Menu :filters="true" :hero="$context.neighborhood"/>
         </div>
@@ -198,10 +198,10 @@ export default {
 
 /* For screens smaller than 414px  */
 @media (max-width: 430px) {
-    #map {
+    .app-list #map {
         display: none;
     }
-    #list-container {
+    .app-list #list-container {
         padding: 15px;
     }
 }
