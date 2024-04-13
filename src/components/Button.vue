@@ -1,6 +1,6 @@
 <template>
-    <a class="button" :class="{flat, active, 'full-width': fullWidth, solid, orange: solid}">
-        {{ text }}
+    <a :class="{button: true, flat, active, 'full-width': fullWidth, solid, orange: solid}"
+        @click.stop="$emit('clicked')">
         <slot></slot>
     </a>
 </template>
@@ -21,10 +21,6 @@ export default {
             type: Boolean,
             required: false,
         },        
-        text: {
-            type: String,
-            required: true,
-        },
         flat: {
             type: Boolean,
             required: false,
@@ -39,9 +35,11 @@ export default {
     @import '~/assets/variables.scss';
 
     .button{
+        width: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
+        column-gap: 6px;
         justify-content: center;
         padding: 0.5rem 0.8rem;
         
@@ -63,15 +61,25 @@ export default {
         &.flat{
             border: none;       
         }
+
         &.solid.orange,
         &:hover,
         &:active{
             background-color: $orange;
             color: white  !important;
+            path{
+                stroke: white;
+            }
         }
+        
         &.active{
             color: $orange;
             border-color: $orange;
+            path{
+                stroke: white;
+            }
         }
+
+
     }
 </styles>
