@@ -3,7 +3,9 @@
             'card'   : true,
             'size-sm': size=='sm', 
             'size-md': size=='md'
-        }">
+        }"
+        @click="moreInfo"
+>
         <div class="pictures-frame" ref="frame">
             <div :class="{
                     'pictures-ui': true,
@@ -58,7 +60,10 @@
             <div class="description">
                 {{ cardData.description }}
             </div>
-            <Button text="Contactar" active fullWidth/>
+            <Button v-if="contact"
+                active 
+                fullWidth
+                @clicked="$emit('clicked-contact')">Contactar</Button>
         </div>
     </div>
 </template>
@@ -98,7 +103,13 @@ export default {
         size: {
             type:     String,
             required: false,
-        }
+        },
+
+        contact:{
+            type:     Boolean,
+            required: false,
+            default:  false,
+        },
     },
 
     data(){
@@ -378,7 +389,7 @@ export default {
 
     .card.size-sm{
         width: 55vw !important;
-        height: 30vh;
+        height: 35vh;
     }
 }
 </style>
