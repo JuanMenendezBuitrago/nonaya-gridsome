@@ -63,13 +63,16 @@
 
         <!-- menu 2 -->
         <div id="filters-1">
-            <SearchBox 
+            <SearchBox v-if="isMobile"
                 id="search-box-1"
                 @focussed="showModal('search')" 
                 @blured="hideModal()" 
                 ref="search"
                 reference="search"/>
-            <Map/>
+                <div class="icon">
+                    <Map/>
+                    <span>Mapa</span>
+                </div>
         </div>
 
         <div v-if="filters" id="filters-2-wrapper" ref="filters-wrapper">
@@ -82,7 +85,7 @@
                 ref="contract" 
                 @clicked="toggleModal('contract')"/>
                 
-                <SearchBox 
+                <SearchBox v-if="!isMobile"
                 id="search-box-2"
                 @focussed="showModal('search')" 
                 @blured="hideModal()" 
@@ -139,7 +142,7 @@
 
         <div id="modals">
                 <ContractModal activator="contract" @selectedValue="changeContractText" />
-                <SearchResultsModal activator="search" />
+                <SearchResultsModal activator="search" @selectedValue="changeLocationText"/>
                 <KindModal activator="kind" @selectedValue="changeKindText" />
                 <PriceModal activator="price" />
                 <BedroomsModal activator="bedrooms" />
@@ -198,6 +201,11 @@ export default {
             type: Boolean,
             required: false,
             default: false
+        },
+        isMobile: {
+            type: Boolean,
+            required: false,
+            default: true
         }
     },
 
@@ -245,6 +253,16 @@ export default {
             this.setActiveModal('');
         },
 
+        changeLocationText() {
+            
+            this.setActiveModal('');
+        },
+
+        changeContractText(text) {
+            this.contractText = text;
+            this.setActiveModal('');
+        },
+
         handleScrollX(event){
             let triggeredElement = event.target;
             this.setScrolledPixels(triggeredElement.scrollLeft);
@@ -263,7 +281,7 @@ export default {
         const filtersWrapper = this.$refs['filters-wrapper'];
         if(filtersWrapper){
             filtersWrapper.removeEventListener('scroll', this.handleScrollX);
-        ç}
+        }
     }
 
 }
@@ -301,15 +319,25 @@ export default {
     display: none;
     border-bottom: none;
     padding-bottom: 0;
+    .icon{
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        span{
+            font-size: 0.6rem;
+        }
+    }
     svg{
-        width: 1.6rem;
+        width: 1.3rem;
+        height: auto;
     }
     #search-box-1{
         flex: 1
     }
 }
 #filters-2-wrapper {
-    width: 100%; 
+    width: 100vw; 
     overflow-x: auto;
     border-bottom: 1px solid $gray-light;
 }
