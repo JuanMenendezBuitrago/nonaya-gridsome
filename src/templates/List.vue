@@ -1,7 +1,7 @@
 <template>
     <div class="app-list">
         <div>
-            <Menu :filters="true" :hero="$context.neighborhood"/>
+            <Menu :filters="true" :hero="$context.neighborhood" :isMobile="isMobile"/>
         </div>
         <div id="list-container">
             <div id="list-content">
@@ -11,16 +11,38 @@
                     <Sort /> Ordenar
                     <ButtonWithIcon icon="down" text="Más barato" />
                 </div>
-                <Card size="md" :cardData="cardData"></Card>
-                <Card size="md" :cardData="cardData"></Card>
-                <Card size="md" :cardData="cardData"></Card>
-                <Card size="md" :cardData="cardData"></Card>
+                <Card 
+                    size="md" 
+                    :cardData="cardData" 
+                    contact
+                    @clicked-contact="showContactModal=true"></Card>
+                <Card 
+                    size="md" 
+                    :cardData="cardData" 
+                    contact
+                    @clicked-contact="showContactModal=true"></Card>
+                <Card 
+                    size="md" 
+                    :cardData="cardData" 
+                    contact
+                    @clicked-contact="showContactModal=true"></Card>
+                <Card 
+                    size="md" 
+                    :cardData="cardData" 
+                    contact
+                    @clicked-contact="showContactModal=true"></Card>
             </div>
             <div id="map" >
                 <div ref="mapContainer">
                 </div>
             </div>
         </div>
+        <ContactModal 
+            v-if="showContactModal"
+            type="list"
+            :back="isMobile"
+            :close="!isMobile"
+            @close="showContactModal=false"/>
     </div>
 </template>
 
@@ -30,6 +52,7 @@ import Sort           from '~/components/icons/Sort.vue';
 import ButtonWithIcon from '~/components/ButtonWithIcon.vue';
 import Menu           from '~/components/Menu.vue';
 import Card           from '~/components/Card.vue';
+import ContactModal   from '~/components/modals/ContactModal.vue';
 
 import { Loader }     from '@googlemaps/js-api-loader';
 
@@ -38,13 +61,17 @@ export default {
         ButtonWithIcon,
         Menu,
         Card,
+        ContactModal,
         Sort
     },
 
     data() {
         return {
+            screenWidth: 0,
+            screenHeight: 0,
             map: null,
             numUnits: 4,
+            showContactModal: false,
             cardData: {
                 habs: 3,
                 bathrooms: 2,
@@ -75,6 +102,12 @@ export default {
                 description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, quis pariatur labore laudantium ducimus necessitatibus..."
             }
         }
+    },
+
+    computed:{
+        isMobile() {
+            return this.screenWidth > 0 && this.screenWidth < 431
+        },
     },
 
     methods: {
@@ -109,7 +142,12 @@ export default {
             // Set appropriate zoom level based on the bounds
             this.map.fitBounds(bounds);
 
-        }
+        },
+
+        updateDimensions() {
+            this.screenWidth  = window.innerWidth;
+            this.screenHeight = window.innerHeight;
+        },
     },
 
     mounted() {
@@ -123,6 +161,12 @@ export default {
         loader.load().then(() => {
             this.initMap();
         });
+        this.updateDimensions();
+        window.addEventListener('resize', this.updateDimensions);
+    },
+
+    beforeDestroy() {
+        window.removeEventListener('resize', this.updateDimensions);
     }
 }
 </script>

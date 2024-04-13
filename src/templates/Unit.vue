@@ -1,6 +1,6 @@
 <template>
     <div class="app-detail">
-        <Menu />
+        <Menu :isMobile="isMobile" />
 
         <Media v-if="isMobile" :single="true" :pictures="$page.unit.pictures" @clickedPicture="showPicture" />
 
@@ -90,7 +90,7 @@
             <!-- sidebar -->
 
             <div id="sidebar">
-                <Contact/>
+                <Contact :type="type"/>
             </div>
 
         </div>
@@ -129,10 +129,30 @@
 
             <div class="cards-overflow">
                 <div class="cards">
-                    <Card size="sm" :cardData="cardData" rented grayscale></Card>
-                    <Card size="sm" :cardData="cardData" rented grayscale></Card>
-                    <Card size="sm" :cardData="cardData" rented grayscale></Card>
-                    <Card size="sm" :cardData="cardData" rented grayscale></Card>
+                    <Card 
+                        size="sm" 
+                        :cardData="cardData" 
+                        rented 
+                        grayscale
+                        @clicked-contact="showContactModal=true"></Card>
+                    <Card 
+                        size="sm" 
+                        :cardData="cardData" 
+                        rented 
+                        grayscale
+                        @clicked-contact="showContactModal=true"></Card>
+                    <Card 
+                        size="sm" 
+                        :cardData="cardData" 
+                        rented 
+                        grayscale
+                        @clicked-contact="showContactModal=true"></Card>
+                    <Card 
+                        size="sm" 
+                        :cardData="cardData" 
+                        rented 
+                        grayscale
+                        @clicked-contact="showContactModal"></Card>
                 </div>
             </div>
         </div>
@@ -140,11 +160,26 @@
         <Footer :unit="$page.unit" />
 
         <div v-if="isMobile" id="contact">
-            <Button solid fullWidth>Contactar</Button>
+            <Button 
+                solid 
+                fullWidth 
+                @clicked="showContact('detail')">
+                <Mail/>Contactar
+            </Button>
         </div>
 
-        <Gallery :pictures="$page.unit.pictures" v-if="showGallery" :indexStart="galleryIndexStart"
+        <Gallery 
+            v-if="showGallery" 
+            :pictures="$page.unit.pictures" 
+            :indexStart="galleryIndexStart"
             @closeMe="closeGallery" />
+
+        <ContactModal 
+            v-if="showContactModal"
+            type="detail"
+            :back="isMobile"
+            :close="!isMobile"
+            @close="showContactModal=false"/>
     </div>
 </template>
 
@@ -188,9 +223,11 @@ import Feature     from '~/components/Feature.vue';
 import Pill        from '~/components/Pill.vue';
 import Card        from '~/components/Card.vue';
 import Tag         from '~/components/icons/Tag.vue';
+import Mail        from '~/components/icons/Mail.vue';
 import RoundButton from '~/components/RoundButton.vue';
 import Button      from '~/components/Button.vue';
 import Contact     from '~/components/Contact.vue';
+import ContactModal from '~/components/modals/ContactModal.vue';
 
 import { Loader } from '@googlemaps/js-api-loader';
 
@@ -203,19 +240,24 @@ export default {
         Feature,
         Pill,
         Tag,
+        Mail,
         Card,
         RoundButton,
         Footer,
         Button,
-        Contact
+        Contact,
+        ContactModal
     },
 
     data() {
         return {
+            type: 'detail',
             screenHeight: 0,
             screenWidth: 0,
             galleryIndexStart: 0,
             showGallery: false,
+            showContactModal: false,
+            contactType:'',
             maxWords: 100,
             showMore: false,
             cardData: {
@@ -346,13 +388,13 @@ export default {
 
         showPicture(index) {
             this.galleryIndexStart = index;
-            this.showGallery = true;
+            this.showGallery       = true;
         },
 
         updateDimensions() {
-            this.screenWidth = window.innerWidth;
+            this.screenWidth  = window.innerWidth;
             this.screenHeight = window.innerHeight;
-        }
+        },
     },
 
     mounted() {
