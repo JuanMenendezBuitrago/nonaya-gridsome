@@ -4,7 +4,7 @@
             <div 
                 v-for="(item, i) in queryResults" 
                 :key="`item_${i}`"
-                @click="selectResult(item.item)" 
+                @click.stop="selectResult(item.item)" 
                 class="search-result-item">{{ item.item.town + ', ' + item.item.province }}</div>
         </template>
         <template v-slot:footer v-if="query.length > 0 && queryResults.length == 0">
@@ -53,6 +53,7 @@ export default {
         selectResult(location) {
             this.setCity(location.town);
             this.setNeighborhood(location.province);
+            this.$emit('selectedValue')
         }
 
     }
@@ -65,6 +66,7 @@ export default {
 .search-result-item{
     padding: calc(5px + 0.3rem) calc(10px + 0.8rem);
     cursor: pointer;
+    pointer-events: all;
 
     &:hover{
         background-color: $orange;

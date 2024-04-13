@@ -2,7 +2,10 @@
     <div class="input-text" style="position: relative;">
         <div class="text-field" :class="{ isFocussed }" :ref="reference">
             <Search />
-            <input type="text" placeholder="Busca por ciudad/barrio" v-model="text" @focus="focus()" @blur="blur()"
+            <input type="text" placeholder="Busca por ciudad/barrio" 
+                v-model="text" 
+                @focus="focus()" 
+                @blur="blur()"
                 @keydown.esc="blur()" />
             <Close v-if="query.length > 0" @click.native="resetQuery" />
         </div>
@@ -64,7 +67,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['query', 'city', 'neighborhood'])
+        ...mapGetters(['query', 'city', 'neighborhood', 'activeModal'])
     },
 
     methods: {
@@ -76,8 +79,10 @@ export default {
         },
 
         blur() {
-            this.isFocussed = false;
-            this.$emit('blured');
+            if(!this.activeModal == 'reference'){
+                this.isFocussed = false;
+                this.$emit('blured');
+            }
         },
 
         resetQuery() {
