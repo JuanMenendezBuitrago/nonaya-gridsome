@@ -24,7 +24,7 @@
             </div>
         </template>
         <template v-slot:footer>
-            <Button flat solid text="Mostrar viviendas"/>
+            <Button flat solid >Mostrar viviendas</Button>
         </template>
     </BaseModal>
 </template>
@@ -99,6 +99,7 @@ export default {
     font-size: 0.8rem;
     padding: calc(5px + 0.3rem) calc(10px + 0.8rem);
     cursor: pointer;
+    pointer-events: all;
 
     &:hover{
         background-color: $orange;
@@ -112,6 +113,8 @@ export default {
     column-gap: 10px;
     row-gap: 5px;
     padding: 10px;
+    pointer-events: all;
+    
     &>label{
         font-size: 0.6rem;
         font-weight: 600;

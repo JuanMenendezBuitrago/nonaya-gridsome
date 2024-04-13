@@ -68,22 +68,20 @@ export default {
         },
         
         scrolledLeft() {
-            console.log('scrolledPixels: ' + this.scrolledPixels )
-            console.log('scrollStart: ' + this.scrollStart)
-            console.log('scrolledLeft: ' + this.left - (this.scrolledPixels - this.scrollStart))
             return this.left - (this.scrolledPixels - this.scrollStart);
         }
     },
 
     methods: {
         ...mapMutations(['setScrolledPixels']),
+
         setCoordinates() {
             let currentParent = this.$parent;
 
             while (currentParent != null) {
 
                 if (currentParent.$refs && currentParent.$refs[this.activator]) {
-                    console.log(currentParent.$refs[this.activator].$el.getBoundingClientRect().left);
+
                     this.top = currentParent.$refs[this.activator].$el.getBoundingClientRect().bottom + window.scrollY;
                     this.left = currentParent.$refs[this.activator].$el.getBoundingClientRect().left;
                     return;
@@ -103,16 +101,12 @@ export default {
 @import '~/assets/variables.scss';
 
 .modal {
-    transition: all 0.3s ease;
     transform-origin: top left;
-    transform: scale(0.8);
-    visibility: hidden;
-    opacity: 0;
-    overflow: visible;
+    display: none;
+
 
     min-width: 100px;
     width: max-content;
-    display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
@@ -129,8 +123,7 @@ export default {
     }
 
     &.show {
-        transform: scale(1);
-        visibility: visible;
+        display: block;
         z-index: 2000;
         opacity: 1;
     }

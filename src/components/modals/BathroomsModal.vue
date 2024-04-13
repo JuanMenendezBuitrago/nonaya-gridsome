@@ -19,7 +19,7 @@
             </div>
         </template>
         <template v-slot:footer>
-            <Button flat solid text="Mostrar viviendas" />
+            <Button flat solid>Mostrar viviendas</Button>
         </template>
     </BaseModal>
 </template>
@@ -86,16 +86,17 @@ export default {
         border-bottom: 1px solid $gray;
         border-left: 1px solid $gray;
         cursor: pointer;
+        pointer-events: all;
 
         &.checked{
-            background-color: $orange;
-            color: white;
+            background-color: $orange-light;
+            color: $orange;
             border-color: $orange;
             &+div{
                 border-left-color: $orange;
             }
             &:hover{
-                color: white;
+                color: $orange;
             }
         }
 
@@ -115,12 +116,15 @@ export default {
             }
             border-radius: 5px 0 0 5px;
         }
-        &:last-child{
+        &:last-child{           
+            border-radius: 0 5px 5px 0;
+            border-right: 1px solid $gray;
             &:hover{
                 border-color: $orange;
             }
-            border-radius: 0 5px 5px 0;
-            border-right: 1px solid $gray;
+            &.checked{
+                border-right: 1px solid $orange;
+            }
         }
     }
 }
@@ -132,6 +136,7 @@ export default {
     column-gap: 5px;
     padding: 5px 10px;
     cursor: pointer;
+    pointer-events: all;
     
     svg{
         width: 1.2rem;
@@ -155,31 +160,6 @@ export default {
         }
     }
 }
-.modal-list-item{
-    font-size: 0.8rem;
-    padding: calc(5px + 0.3rem) calc(10px + 0.8rem);
-    cursor: pointer;
 
-    &:hover{
-        background-color: $orange;
-        color: white;
-    }
-}
-
-.price-form{
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 10px;
-    row-gap: 5px;
-    padding: 10px;
-    &>label{
-        font-size: 0.6rem;
-        font-weight: 600;
-        width: calc(50% - 5px);
-    }
-    &>div{
-        width: calc(50% - 5px);
-    }
-}
 
 </style>

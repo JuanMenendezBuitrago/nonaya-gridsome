@@ -63,6 +63,7 @@ export default {
     font-size: 0.8rem;
     padding: calc(5px + 0.3rem) calc(10px + 0.8rem);
     cursor: pointer;
+    pointer-events: all;
 
     &:hover{
         background-color: $orange;
