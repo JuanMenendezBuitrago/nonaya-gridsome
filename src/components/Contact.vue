@@ -1,12 +1,20 @@
 <template>
-    <div class="contact-form">
-        <h2>¡Quiero visitarlo!</h2>
+    <div :class="{ 'contact-form': true, list: type == 'list', detail: type == 'detail' }">
+
+        <h2>
+            <ArrowLeft v-if="back" @click.native="$emit('back')" />
+            <span>{{ headers[type] }}</span>
+            <Close v-if="close" @click.native="$emit('close')"/>
+        </h2>
+
         <form action="">
             <input type="text" placeholder="Nombre">
             <input type="text" placeholder="Email">
             <input type="text" placeholder="Teléfono con Whatsapp">
             <textarea style="width:100%;" placeholder="Mensaje"></textarea>
-            <Button solid fullWidth>Contactar</Button>
+
+            <Button solid fullWidth>{{ buttonText[type] }}</Button>
+
             <div class="result" v-if="showResult">Hemos recibido tu solicitud de visita. Nos pondremos
                 en contacto contigo para organizar una visita al piso
                 siguiendo el orden de las solicitudes recibidas.</div>
@@ -16,15 +24,49 @@
 
 <script>
 import Button from '~/components/Button.vue'
+import ArrowLeft from '~/components/icons/ArrowLeft.vue'
+import Close from '~/components/icons/Close.vue'
 
 export default {
     components: {
-        Button
+        Button,
+        ArrowLeft,
+        Close
+    },
+
+    props: {
+        close: {
+            type: Boolean,
+            default: false,
+            required: false
+        },
+
+        back: {
+            type: Boolean,
+            default: false,
+            required: false
+        },
+
+        type: {
+            type: String,
+            required: true,
+            validator: function (value) {
+                return ['detail', 'list'].includes(value);
+            }
+        }
     },
 
     data() {
         return {
-            showResult: false
+            showResult: false,
+            headers: {
+                'list': 'Contacta ahora',
+                'detail': '¡Quiero visitarlo!'
+            },
+            buttonText: {
+                'list': 'Enviar mensaje',
+                'detail': 'Contactar'
+            }
         }
     }
 }
@@ -35,28 +77,15 @@ export default {
 @import '~/assets/variables.scss';
 
 .contact-form {
-    background-color: $blue-light;
     padding: 25px;
     margin-left: 15px;
     border-radius: 15px;
+
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-
-    h2 {
-        text-align: center;
-        margin-top: 0;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        font-size: 0.75rem;
-
-    }
-
+    align-items: stretch;
+    
     input,
     textarea,
     .button,
@@ -79,6 +108,44 @@ export default {
         }
     }
 
+    &.detail {
+        background-color: $blue-light;
+    }
+    
+    &.list {
+        input,
+        textarea {
+            border: 1px solid $gray;
+        }
+        background-color: white;
+    }
+
+    h2 {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+        margin-top: 0;
+
+        span {
+            flex: 1;
+        }
+
+        path {
+            fill: $black;
+        }
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        font-size: 0.75rem;
+    }
+
+  
     .result {
         margin-bottom: 0;
         padding-bottom: 0;
@@ -94,5 +161,11 @@ export default {
         margin: 0;
     }
 
+}
+
+@media (max-width:430px) {
+    .contact-form {
+        margin: 0;
+    }
 }
 </style>
