@@ -46,7 +46,6 @@ export default {
 
     computed: {
         shownIndex() {
-            console.log('* shownIndex()')
             if ( this.activeIndex < 0 && this.indexStart < 0){
                 this.activeIndex = 0
                 return this.activeIndex
@@ -80,7 +79,6 @@ export default {
     },
 
     mounted(){
-        console.log('mounted')
     }
 }
 </script>
@@ -95,6 +93,7 @@ export default {
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.9);
+        z-index: 6000;
 
         display: flex;
         justify-content: space-around;

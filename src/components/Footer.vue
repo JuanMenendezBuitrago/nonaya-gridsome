@@ -70,6 +70,7 @@ footer {
 @media (max-width:430px) {
     footer{
         padding-bottom: 0;
+        margin: 15px 30px;
     }
     .footer-content{
         flex-direction: column;
