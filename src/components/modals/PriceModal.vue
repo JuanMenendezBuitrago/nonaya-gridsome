@@ -8,18 +8,25 @@
                 <label>Mínimo</label>
                 <label>Máximo</label>
                 <ButtonWithIcon 
-                :text="minPrice < 0 ? 'Mínimo' : formatPrice(minPrice)" 
+                    :text="minPrice < 0 ? 'Mínimo' : formatPrice(minPrice)" 
                     icon="down" 
                     reference="price-min"
                     @clicked="togglePriceModal('price-min')">
-                    <ListPricesModal activator="price-min" :show="showMinPrice"/>
+                    <ListPricesModal 
+                        activator="price-min" 
+                        :show="showMinPrice"
+                        zero
+                        @selected="setMin"/>
                 </ButtonWithIcon>
                 <ButtonWithIcon 
                     :text="maxPrice < 0 ? 'Máximo' : formatPrice(maxPrice)" 
                     icon="down"
                     reference="price-max"
                     @clicked="togglePriceModal('price-max')">
-                    <ListPricesModal activator="price-max" :show="showMaxPrice"/>
+                    <ListPricesModal 
+                        activator="price-max" 
+                        :show="showMaxPrice"
+                        @selected="setMax"/>
                 </ButtonWithIcon>
             </div>
         </template>
@@ -52,6 +59,8 @@ export default {
     },
     data(){
         return {
+            showMinPrice: false,
+            showMaxPrice: false,
             kinds: [{
                 text: 'Casa'
             },
@@ -64,17 +73,17 @@ export default {
         }
     },
     computed:{
-        ...mapGetters(['maxPrice', 'minPrice', 'showMaxPrice', 'showMinPrice']),
+        ...mapGetters(['maxPrice', 'minPrice']),
     },
     methods: {
-        ...mapMutations(['setMaxPrice', 'setMinPrice', 'setShowMaxPrice', 'setShowMinPrice']),
+        ...mapMutations(['setMaxPrice', 'setMinPrice']),
 
         togglePriceModal(name) {
             if('price-min' == name) {
-                this.setShowMinPrice(!this.showMinPrice);
+                this.showMinPrice = !this.showMinPrice
             }
             if('price-max' == name) {
-                this.setShowMaxPrice(!this.showMaxPrice);
+                this.showMaxPrice = !this.showMaxPrice;
             }
         },
 
@@ -88,6 +97,16 @@ export default {
 
             return euro.format(value);
         },
+
+        setMin(value){
+            this.setMinPrice(value);
+            this.showMinPrice = false;
+        },
+
+        setMax(value){
+            this.setMaxPrice(value);
+            this.showMaxPrice = false;
+        }
     }
 }
 </script>

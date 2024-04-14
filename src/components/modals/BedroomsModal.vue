@@ -34,24 +34,29 @@ import { mapGetters, mapMutations } from 'vuex';
 
 
 export default {
+    name: 'BedroomsModal',
+
     components: {
         BaseModal,
         Button,
         ButtonWithIcon,
         Checkbox
     },
+
     props: {
         activator: {
             type: String,
             required: false
         }
     },
+
     data(){
         return {
             value: 0,
             exact: false
         }
     },
+
     computed: {
         ...mapGetters(['bedrooms'])
     },
@@ -83,16 +88,16 @@ export default {
         flex: 1;
         text-align: center;
         padding: 10px 20px;
-        border-top: 1px solid $gray;
+        border-top:    1px solid $gray;
         border-bottom: 1px solid $gray;
-        border-left: 1px solid $gray;
+        border-left:   1px solid $gray;
         cursor: pointer;
-        pointer-events: all;
 
         &.checked{
             background-color: $orange-light;
             color: $orange;
             border-color: $orange;
+            
             &+div{
                 border-left-color: $orange;
             }
@@ -137,7 +142,7 @@ export default {
     column-gap: 5px;
     padding: 5px 10px;
     cursor: pointer;
-    pointer-events: all;
+    
     
     svg{
         width: 1.2rem;

@@ -124,9 +124,10 @@
                 <ButtonWithIcon 
                 icon="filter" 
                 text="Filtros" 
+                ref="search-filters"
+                reference="search-filters"
                 :count="filterCount" 
-                ref="filters"
-                reference="filters"/>
+                @clicked="toggleModal('search-filters')"/>
             </div>
         </div>
 
@@ -147,7 +148,7 @@
                 <PriceModal activator="price" />
                 <BedroomsModal activator="bedrooms" />
                 <BathroomsModal activator="bathrooms" />
-                <Modal activator="filters" />
+                <FiltersModal activator="search-filters" />
         </div>
     </div>
 </template>
@@ -160,12 +161,12 @@ import Price              from '~/components/icons/Price.vue';
 import Map                from '~/components/icons/Map.vue';
 import SearchBox          from '~/components/SearchBox.vue';
 import RentuosLogo        from '~/components/RentuosLogo.vue';
-import Modal              from '~/components/Modal.vue';
 import ContractModal      from '~/components/modals/ContractModal.vue';
 import SearchResultsModal from '~/components/modals/SearchResultsModal.vue';
 import KindModal          from '~/components/modals/KindModal.vue';
 import BathroomsModal     from '~/components/modals/BathroomsModal.vue';
 import BedroomsModal      from '~/components/modals/BedroomsModal.vue';
+import FiltersModal       from '~/components/modals/FiltersModal.vue';
 import PriceModal         from '~/components/modals/PriceModal.vue';
 import ButtonWithIcon     from '~/components/ButtonWithIcon.vue';
 
@@ -183,11 +184,11 @@ export default {
         ChevronRight,
         Price,
         Map,
-        Modal,
         SearchResultsModal,
         ContractModal,
         BathroomsModal,
         BedroomsModal,
+        FiltersModal,
         KindModal,
         PriceModal
     },

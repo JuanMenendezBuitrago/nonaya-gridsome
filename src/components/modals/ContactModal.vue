@@ -12,10 +12,12 @@
 import Contact from '~/components/Contact.vue';
 
 export default {
-    name: 'ContactOverlay',
+    name: 'ContactModal',
+
     components: {
         Contact
     },
+    
     props: {
         back: {
             type: Boolean,

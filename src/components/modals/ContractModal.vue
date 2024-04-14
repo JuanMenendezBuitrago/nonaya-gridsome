@@ -1,12 +1,13 @@
 <template>
     <BaseModal :activator="activator" :hideOverflow="true">
+
         <template v-slot:body>
             <div 
-                v-for="contractData, i in contractTypes" 
-                :key="`type_${i}`" 
+                v-for="contractData, i in contractTypes" :key="`type_${i}`" 
                 class="modal-list-item"
                 @click.stop="selectContract(contractData.key)">{{ contractData.text }}</div>
         </template>
+
     </BaseModal>
 </template>
 
@@ -16,15 +17,18 @@ import { mapMutations } from 'vuex';
 
 export default {
     name: 'ContractModal',
+
     components: {
         BaseModal
     },
+
     props: {
         activator: {
             type: String,
             required: false
         }
     },
+    
     data(){
         return {
             value:'',
@@ -64,7 +68,6 @@ export default {
     padding: calc(5px + 0.3rem) calc(10px + 0.8rem);
     font-size: 0.8rem;
     cursor: pointer;
-    pointer-events:all;
 
     &:hover{
         background-color: $orange;

@@ -3,7 +3,7 @@
         <div class="dropdown-button" 
             :class="{ flat, selected, simple, withFilters: count > 0 }" 
             :ref="reference"
-            @click.stop="$emit('clicked', reference)">
+            @click.stop="clicked">
             <Config     
                 v-if="icon == 'filter'" />
             <ArrowLeft  
@@ -20,6 +20,7 @@
                 v-if="icon == 'up'" 
                 selected="selected" />
         </div>
+        <slot :show="showChildren"></slot>
     </div>
 </template>
 
@@ -31,6 +32,7 @@ import ArrowRight  from '~/components/icons/ArrowRight.vue';
 import ArrowLeft   from '~/components/icons/ArrowLeft.vue';
 
 export default {
+    name: 'ButtonWithIcon',
 
     components: {
         ChevronDown,
@@ -75,6 +77,19 @@ export default {
                 // The value must match one of these strings
                 return ['down', 'up', 'left', 'right', 'filter'].includes(value);
             }
+        }
+    },
+
+    data(){
+        return {
+            showChildren: false,
+        }
+    },
+
+    methods: {
+        clicked(){
+            this.showChildren != this.showChildren;
+            this.$emit('clicked', this.reference)
         }
     }
 }

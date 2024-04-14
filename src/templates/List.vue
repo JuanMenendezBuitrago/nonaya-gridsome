@@ -14,21 +14,25 @@
                 <Card 
                     size="md" 
                     :cardData="cardData" 
+                    :isMobile = isMobile
                     contact
                     @clicked-contact="showContactModal=true"></Card>
                 <Card 
                     size="md" 
                     :cardData="cardData" 
+                    :isMobile = isMobile
                     contact
                     @clicked-contact="showContactModal=true"></Card>
                 <Card 
                     size="md" 
                     :cardData="cardData" 
+                    :isMobile = isMobile
                     contact
                     @clicked-contact="showContactModal=true"></Card>
                 <Card 
                     size="md" 
                     :cardData="cardData" 
+                    :isMobile = isMobile
                     contact
                     @clicked-contact="showContactModal=true"></Card>
             </div>

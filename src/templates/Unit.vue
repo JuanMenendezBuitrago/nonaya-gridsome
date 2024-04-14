@@ -133,26 +133,22 @@
                         size="sm" 
                         :cardData="cardData" 
                         rented 
-                        grayscale
-                        @clicked-contact="showContactModal=true"></Card>
+                        grayscale></Card>
                     <Card 
                         size="sm" 
                         :cardData="cardData" 
                         rented 
-                        grayscale
-                        @clicked-contact="showContactModal=true"></Card>
+                        grayscale></Card>
                     <Card 
                         size="sm" 
                         :cardData="cardData" 
                         rented 
-                        grayscale
-                        @clicked-contact="showContactModal=true"></Card>
+                        grayscale></Card>
                     <Card 
                         size="sm" 
                         :cardData="cardData" 
                         rented 
-                        grayscale
-                        @clicked-contact="showContactModal"></Card>
+                        grayscale></Card>
                 </div>
             </div>
         </div>
@@ -163,7 +159,7 @@
             <Button 
                 solid 
                 fullWidth 
-                @clicked="showContact('detail')">
+                @clicked="showContactModal=true">
                 <Mail/>Contactar
             </Button>
         </div>

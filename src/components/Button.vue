@@ -8,6 +8,8 @@
 <script>
 
 export default {
+    name: 'Button',
+
     props: {
         active: {
             type: Boolean,
@@ -79,7 +81,5 @@ export default {
                 stroke: white;
             }
         }
-
-
     }
 </styles>

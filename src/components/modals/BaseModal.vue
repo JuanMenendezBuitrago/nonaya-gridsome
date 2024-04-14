@@ -1,17 +1,17 @@
 <template>
     <div
-        :style="top && left ? { top: top + 'px', left: scrolledLeft + 'px' } : {}"
-        :class="{show: (show || isActive), modal: true, 'hide-overflow': hideOverflow }">
+        :style="styles"
+        :class="{modal: true, centered:centered, show: (show || isActive), 'hide-overflow': hideOverflow }">
 
-        <div class="modal-header borderless" v-if="$slots.header">
+        <div v-if="$slots.header" class="modal-header borderless">
             <slot name="header"></slot>
         </div>
 
-        <div class="modal-body" v-if="$slots.body">
+        <div v-if="$slots.body" class="modal-body">
             <slot name="body"></slot>
         </div>
 
-        <div class="modal-footer right" v-if="$slots.footer">
+        <div v-if="$slots.footer" class="modal-footer right">
             <slot name="footer"></slot>
         </div>
     </div>
@@ -21,11 +21,18 @@
 import { mapGetters, mapMutations } from 'vuex';
 
 export default {
+    name: 'BaseModal',
 
     props: {
         activator: {
             type: String,
             required: false
+        },
+
+        centered: {
+            type: Boolean,
+            required: false,
+            default: false
         },
 
         hideOverflow: {
@@ -45,6 +52,7 @@ export default {
         return {
             top: 0,
             left: 0,
+            width: 0,
             scrollStart: 0
         }
     },
@@ -55,35 +63,61 @@ export default {
             if(newVal === true) {
                 this.setCoordinates();
             }
+        },
+        showMaxPrice(newVal, oldVal) {
+            if(this.activator == 'price-max' && newVal === true) {
+                this.setWidth();
+            }
+        },
+        showMinPrice(newVal, oldVal) {
+            if(this.activator == 'price-min' && newVal === true) {
+                this.setWidth();
+            }
         }
     },
 
     computed: {
         ...mapGetters([
-            'activeModal', 'scrolledPixels', 'touchDelta'
+            'activeModal', 'scrolledPixels', 'touchDelta', 'showMaxPrice', 'showMinPrice'
         ]),
 
         isActive() {
             return this.activeModal == this.activator
         },
         
-        scrolledLeft() {
+        computedLeft() {
             return this.left - (this.scrolledPixels - this.scrollStart);
-        }
-    },
+        },
 
-    methods: {
-        ...mapMutations(['setScrolledPixels']),
+        styles() {
+            let styles = {};
 
-        setCoordinates() {
-            let currentParent = this.$parent;
+            if(this.width){
+                styles = { ...styles, 'min-width': this.width + 'px'};
+            }
+            if(this.top){
+                styles = { ...styles, top: this.top + 'px'};
+            }
+            if(this.left && !this.centered){
+                styles = {...styles, left: this.computedLeft + 'px' };
+            }
+            return styles;
+        },
+
+        findActivator() {
+            let currentParent = this;
 
             while (currentParent != null) {
-
                 if (currentParent.$refs && currentParent.$refs[this.activator]) {
-
-                    this.top = currentParent.$refs[this.activator].$el.getBoundingClientRect().bottom + window.scrollY;
-                    this.left = currentParent.$refs[this.activator].$el.getBoundingClientRect().left;
+                    try{
+                        if(currentParent.$refs[this.activator].$el)
+                            return currentParent.$refs[this.activator].$el
+                        
+                        return currentParent.$refs[this.activator]
+                        
+                    }catch(e){
+                        console.log(currentParent.$refs)
+                    }
                     return;
                 }
                 currentParent = currentParent.$parent;
@@ -91,8 +125,24 @@ export default {
         }
     },
 
+    methods: {
+        ...mapMutations(['setScrolledPixels']),
+
+        setCoordinates() {
+            let activator = this.findActivator
+            this.top = activator.getBoundingClientRect().bottom + window.scrollY;
+            this.left = activator.getBoundingClientRect().left;
+        },
+
+        setWidth() {
+            let activator = this.findActivator
+            this.width = activator.getBoundingClientRect().width;
+        },
+    },
+
     mounted() {
         this.setCoordinates();
+        this.setWidth()
     }
 }
 </script>
@@ -101,20 +151,19 @@ export default {
 @import '~/assets/variables.scss';
 
 .modal {
-    transform-origin: top left;
     display: none;
-
+    pointer-events: all;
 
     min-width: 100px;
-    width: max-content;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
+    width:     max-content;
 
-    position: absolute;
-    z-index: 1000;
+    flex-direction:  column;
+    justify-content: flex-start;
+    align-items:     stretch;
+
+    position:         absolute;
     background-color: white;
-    border-radius: 5px;
+    border-radius:    5px;
 
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 
@@ -129,11 +178,6 @@ export default {
     }
 }
 
-.modal-header,
-.modal-footer {
-    padding: 10px;
-}
-
 .modal-body {
     padding: 0;
     font-size: 0.8rem;
@@ -141,6 +185,7 @@ export default {
 
 .modal-header {
     border-bottom: 1px solid $gray-light;
+    padding: 10px;
     padding-bottom: 5px;
 
     h1 {
@@ -156,6 +201,7 @@ export default {
 .modal-footer {
     display: flex;
     border-top: 1px solid $gray-light;
+    padding: 10px;
     padding-top: 5px;
     font-size: 0.8rem;
 
@@ -173,6 +219,13 @@ export default {
 
     &.center {
         justify-content: center;
+    }
+}
+
+@media (max-width:430px) {
+    .modal.centered {
+        width: calc(100vw - 30px);
+        left: 15px;
     }
 }
 </style>

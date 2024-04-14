@@ -1,5 +1,11 @@
 <template>
-    <BaseModal :activator="activator" :hideOverflow="true">
+    <BaseModal 
+        :activator="activator" 
+        :hideOverflow="true"
+        centered>
+        <template v-slot:header>
+            <h1>Filtros</h1>
+        </template>       
         <template v-slot:body>
             <div 
                 v-for="kind, i in kinds" 
@@ -7,18 +13,24 @@
                 class="modal-list-item"
                 @click.stop="selectKind(kind.key)">{{ kind.text }}</div>
         </template>
-    </BaseModal>
+
+        <template v-slot:footer>
+            <Button flat solid >Mostrar viviendas</Button>
+        </template>
+    </BaseModal>        
 </template>
 
 <script>
 import BaseModal from './BaseModal.vue';
+import Button          from '../Button.vue';
 import { mapMutations } from 'vuex';
 
 export default {
-    name: 'KindModal',
+    name: 'KindMFiltersModal',
 
     components: {
-        BaseModal
+        BaseModal,
+        Button
     },
 
     props: {

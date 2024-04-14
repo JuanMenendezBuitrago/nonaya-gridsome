@@ -40,6 +40,8 @@ import Euro      from '~/components/icons/Euro.vue';
 import Hourglass from '~/components/icons/Hourglass.vue';
 
 export default {
+    name: 'Feature',
+    
     components: {
         Room,
         Bathroom,

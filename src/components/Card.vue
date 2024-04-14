@@ -6,7 +6,9 @@
         }"
         @click="moreInfo"
 >
-        <div class="pictures-frame" ref="frame">
+        <div
+            :class="{'pictures-frame': true, swipable: isMobile }" 
+            ref="frame">
             <div :class="{
                     'pictures-ui': true,
                     'carrousel-buttons': !rented && pictureCount > 1,
@@ -76,6 +78,8 @@ import Button      from '~/components/Button.vue';
 import Pill        from '~/components/Pill.vue';
 
 export default {
+    name: 'Card',
+
     components : {
         Location,
         Pill,
@@ -83,6 +87,7 @@ export default {
         RoundButton,
         Feature
     },
+
     props: {
         rented:{
             type:     Boolean,
@@ -110,6 +115,12 @@ export default {
             required: false,
             default:  false,
         },
+
+        isMobile:{
+            type:     Boolean,
+            required: false,
+            default:  false,
+        },
     },
 
     data(){
@@ -117,7 +128,12 @@ export default {
             pictures: [],
             currentPictureIndex : 0,
             frameHeight: 0,
-            frameWidth: 0
+            frameWidth: 0,
+            swipe: {
+                touchstartX: 0,
+                touchendX: 0,
+                area: null,
+            }
         }
     },
 
@@ -167,13 +183,37 @@ export default {
             this.pictures = this.cardData.pictures;
 
         },
+
+        handleTouchStart(event){
+            this.swipe.touchstartX = event.touches[0].clientX;
+        },
+
+        handleTouchEnd(event) {
+            this.swipe.touchendX = event.changedTouches[0].clientX;
+            this.handleGesure();
+        },
+
+        handleGesure() {
+            if (this.swipe.touchendX < this.swipe.touchstartX) {
+                this.increaseIndex();
+            }
+            if (this.swipe.touchendX > this.swipe.touchstartX) {
+                this.decreaseIndex();
+            }
+        },
+
         increaseIndex() {
             if (this.currentPictureIndex < this.pictures.length - 1)
                 this.currentPictureIndex++;
         },
+
         decreaseIndex() {
             if (this.currentPictureIndex > 0)
                 this.currentPictureIndex--;
+        },
+
+        moreInfo(){
+
         }
     },
 
@@ -184,12 +224,19 @@ export default {
 
         this.handleCarrousel()
 
+        this.swipe.area = this.$refs.frame;
+        this.swipe.area.addEventListener('touchstart', this.handleTouchStart, false);
+        this.swipe.area.addEventListener('touchend', this.handleTouchEnd, false);
+
+
     },
 
     beforeDestroy() {
         // Remove event listener when component is destroyed
         window.removeEventListener('resize', this.handleCarrousel);
         window.removeEventListener('load', this.handleCarrousel);
+        this.swipe.area.removeEventListener('touchstart', this.handleTouchStart);
+        this.swipe.area.removeEventListener('touchend', this.handleTouchEnd);
     }
 }
 

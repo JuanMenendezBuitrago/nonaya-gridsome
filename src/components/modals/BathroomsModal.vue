@@ -1,8 +1,10 @@
 <template>
     <BaseModal :activator="activator" >
+
         <template v-slot:header>
             <h1>Baños</h1>
         </template>        
+
         <template v-slot:body>
             <div class="bathrooms-buttons">
                 <div :class="{checked: bathrooms == 0}" @click.stop="selectAmount(0)">Todo</div>
@@ -11,16 +13,17 @@
                 <div :class="{checked: bathrooms == 3}" @click.stop="selectAmount(3)">3+</div>
             </div>
             <div 
-                class="bathrooms-checkbox" 
-                :class="{checked: exact}" 
+                :class="{'bathrooms-checkbox': true, checked: exact}" 
                 :style="{visibility: (bathrooms > 0) ? 'visible' : 'hidden'}" 
                 @click.stop="toggleCheckbox($event)">
                 <Checkbox :checked="exact"/> Número exacto de baños
             </div>
         </template>
+
         <template v-slot:footer>
             <Button flat solid>Mostrar viviendas</Button>
         </template>
+
     </BaseModal>
 </template>
 
@@ -33,6 +36,8 @@ import Checkbox from '../icons/Checkbox.vue';
 import { mapGetters, mapMutations } from 'vuex';
 
 export default {
+    name: 'BathroomModal',
+    
     components: {
         BaseModal,
         Button,
@@ -86,7 +91,6 @@ export default {
         border-bottom: 1px solid $gray;
         border-left: 1px solid $gray;
         cursor: pointer;
-        pointer-events: all;
 
         &.checked{
             background-color: $orange-light;
@@ -134,9 +138,9 @@ export default {
     justify-content: flex-start;
     align-items: center;
     column-gap: 5px;
+
     padding: 5px 10px;
     cursor: pointer;
-    pointer-events: all;
     
     svg{
         width: 1.2rem;
