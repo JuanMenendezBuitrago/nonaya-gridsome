@@ -3,9 +3,11 @@
         :activator="activator" 
         :hideOverflow="true"
         centered>
+
         <template v-slot:header>
             <h1>Filtros</h1>
         </template>       
+        
         <template v-slot:body>
             <div 
                 v-for="kind, i in kinds" 
@@ -26,7 +28,7 @@ import Button          from '../Button.vue';
 import { mapMutations } from 'vuex';
 
 export default {
-    name: 'KindMFiltersModal',
+    name: 'FiltersModal',
 
     components: {
         BaseModal,

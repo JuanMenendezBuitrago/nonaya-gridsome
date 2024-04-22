@@ -136,7 +136,7 @@ export default {
     .photo4,
     .photo5 {
         background-size: cover;
-        background-position: center;
+        background-position: bottom left;
         cursor: pointer;
     }
 }

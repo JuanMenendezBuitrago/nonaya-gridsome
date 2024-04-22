@@ -70,7 +70,7 @@ export default {
         ...mapMutations(['setMaxPrice', 'setMinPrice', 'setShowMaxPrice', 'setShowMinPrice']),
 
         formatPrice(value) {
-            let euro = Intl.NumberFormat('en-DE', {
+            let euro = Intl.NumberFormat('de-DE', {
                 style: 'currency',
                 currency: 'EUR',
                 minimumFractionDigits: 0,

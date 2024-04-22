@@ -1,5 +1,5 @@
 <template>
-    <span class="circle" :class="{visible: show}" @click="$emit('clicked')">
+    <span class="circle" :class="{visible: show}" @click.stop="$emit('clicked')">
         <ChevronRight v-if="icon=='right'"/>
         <ChevronLeft  v-if="icon=='left'"/>
     </span>

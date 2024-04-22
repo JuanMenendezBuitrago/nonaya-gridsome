@@ -8,39 +8,79 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // Define your state properties here
-    counter: 0,
-    contract: '',
-    kind:'',
-    bedrooms: 0,
-    bathrooms: 0,
-    activeModal: '',
-    scrolledPixels: 0,
-    showMaxPrice: false,
-    maxPrice: 0,
-    showMinPrice: false,
-    minPrice: 0,
-    query:'',
-    queryResults: '',
-    city:'',
-    neighborhood: '',
-    touchDelta: 0
+  
+    activeModal:      '',
+    scrolledPixels:   0,
+    counter:          0,
+    showMaxPrice:     false,
+    showMinPrice:     false,
+    query:            '',
+    queryResults:     '',
+    touchDelta:       0,
+      
+    filter_maxPrice:     0,
+    filter_minPrice:     0,
+    filter_contract:     '',
+    filter_kind:         '',
+    filter_bedrooms:     0,
+    filter_bathrooms:    0,
+    filter_city:         '',
+    filter_neighborhood: '',
+
+    sort_text:           '',
+    sort_direction:      '',
+    sort_by:             '',
   },
+
+
   mutations: {
     // Define your mutations here
     setContract(state, payload){
-        state.contract = payload;
+        state.filter_contract = payload;
     },
 
     setKind(state, payload){
-        state.kind = payload;
+        state.filter_kind = payload;
     },
 
     setBedrooms(state, payload){
-        state.bedrooms = payload;
+        state.filter_bedrooms = payload;
     },    
     
     setBathrooms(state, payload){
-        state.bathrooms = payload;
+        state.filter_bathrooms = payload;
+    },
+
+    setMaxPrice(state, payload){
+        state.filter_maxPrice = payload;
+    },
+
+    setMinPrice(state, payload){
+        state.filter_minPrice = payload;
+    },
+
+    setCity(state, payload){
+        state.filter_city = payload;
+    },
+
+    setNeighborhood(state, payload){
+        state.filter_neighborhood = payload;
+    },
+
+    setSortText(state, payload){
+        state.sort_text = payload;
+    },
+    
+    setSortByWay(state, payload){
+        state.sort_direction = payload;
+    },
+    
+    setSortBy(state, payload){
+        state.sort_by = payload;
+    },
+
+    setTouchDelta(state, payload){
+        state.touchDelta = payload;
     },
 
     setScrolledPixels(state, payload){
@@ -51,22 +91,6 @@ export default new Vuex.Store({
         state.activeModal = payload;
     },
 
-    setMaxPrice(state, payload){
-        state.maxPrice = payload;
-    },
-
-    setMinPrice(state, payload){
-        state.minPrice = payload;
-    },
-
-    setShowMaxPrice(state, payload){
-        state.showMaxPrice = payload;
-    },
-
-    setShowMinPrice(state, payload){
-        state.showMinPrice = payload;
-    },
-
     setQuery(state, payload){
         state.query = payload;
     },
@@ -75,17 +99,6 @@ export default new Vuex.Store({
         state.queryResults = payload;
     },
 
-    setCity(state, payload){
-        state.city = payload;
-    },
-
-    setNeighborhood(state, payload){
-        state.neighborhood = payload;
-    },
-
-    setTouchDelta(state, payload){
-        state.touchDelta = payload;
-    }    
   },
 
   actions: {
@@ -94,34 +107,50 @@ export default new Vuex.Store({
 
   getters: {
     // Define your getters here
-    activeModal(state, getters){
-        return state.activeModal;
-    },
-    scrolledPixels(state, getters){
-        return state.scrolledPixels;
-    },
+  
     contract(state, getters){
-        return state.contract;
+        return state.filter_contract;
     },
     kind(state, getters){
-        return state.kind;
+        return state.filter_kind;
     },
 
     bedrooms(state, getters){
-        return state.bedrooms;
+        return state.filter_bedrooms;
     },
     
     bathrooms(state, getters){
-        return state.bathrooms;
+        return state.filter_bathrooms;
     },
     
     maxPrice(state, getters){
-        return state.maxPrice;
+        return state.filter_maxPrice;
     },    
     
     minPrice(state, getters){
-        return state.minPrice;
+        return state.filter_minPrice;
     },    
+    
+    city(state, getters){
+        return state.filter_city;
+    } , 
+    
+    neighborhood(state, getters){
+        return state.filter_neighborhood;
+    } , 
+    
+    
+    sortText(state, getters){
+        return state.sort_text;
+    } ,
+
+    sortBy(state, getters){
+        return state.sort_by;
+    } ,
+
+    sortByWay(state, getters){
+        return state.sort_direction;
+    } ,
     
     showMaxPrice(state, getters){
         return state.showMaxPrice;
@@ -134,21 +163,21 @@ export default new Vuex.Store({
     query(state, getters){
         return state.query;
     }, 
-
+    
     queryResults(state, getters){
         return state.queryResults;
     } , 
-
-    city(state, getters){
-        return state.city;
-    } , 
-
-    neighborhood(state, getters){
-        return state.neighborhood;
-    } , 
-
+    
     touchDelta(state, getters){
         return state.touchDelta;
-    } 
+    },
+
+    activeModal(state, getters){
+        return state.activeModal;
+    },
+
+    scrolledPixels(state, getters){
+        return state.scrolledPixels;
+    },
   }
 })

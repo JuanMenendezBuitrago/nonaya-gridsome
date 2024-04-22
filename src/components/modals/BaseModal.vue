@@ -1,7 +1,11 @@
 <template>
     <div
         :style="styles"
-        :class="{modal: true, centered:centered, show: (show || isActive), 'hide-overflow': hideOverflow }">
+        :class="{modal: true, 
+                centered:centered, 
+                show: (show || isActive), 
+                'hide-overflow': hideOverflow 
+                }">
 
         <div v-if="$slots.header" class="modal-header borderless">
             <slot name="header"></slot>
@@ -45,7 +49,13 @@ export default {
             type: Boolean,
             required: false,
             default: false
-        }
+        },
+
+        noCoords: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
     },
 
     data() {
@@ -106,6 +116,7 @@ export default {
 
         findActivator() {
             let currentParent = this;
+            console.log(currentParent[this.activator])
 
             while (currentParent != null) {
                 if (currentParent.$refs && currentParent.$refs[this.activator]) {
@@ -129,8 +140,10 @@ export default {
         ...mapMutations(['setScrolledPixels']),
 
         setCoordinates() {
+            if(this.noCoords) return;
+
             let activator = this.findActivator
-            this.top = activator.getBoundingClientRect().bottom + window.scrollY;
+            this.top  = activator.getBoundingClientRect().bottom + window.scrollY;
             this.left = activator.getBoundingClientRect().left;
         },
 

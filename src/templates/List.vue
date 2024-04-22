@@ -1,38 +1,48 @@
 <template>
     <div class="app-list">
         <div>
-            <Menu :filters="true" :hero="$context.neighborhood" :isMobile="isMobile"/>
+            <Menu 
+            :filters  = "true" 
+            :isMobile = isMobile
+            :hero     = "$context.hero"
+            :searchType = "$context.searchType"
+            :location   = location />
         </div>
-        <div id="list-container">
-            <div id="list-content">
-                <h1>Viviendas en alquiler en Gràcia, Barcelona </h1>
-                <h3>{{ numUnits }} pisos y casas en alquiler</h3>
+        <div id = "list-container">
+            <div id = "list-content">
+                <h1>Viviendas en alquiler en {{ location }} </h1>
+                <h3>{{ $context.units.length }} pisos y casas en alquiler</h3>
                 <div class="sort">
                     <Sort /> Ordenar
-                    <ButtonWithIcon icon="down" text="Más barato" />
+                    <ButtonWithIcon 
+                        icon = "down" 
+                        ref = "sort"
+                        reference = "sort"
+                        :text = "( sortText || sort.text)"
+                        @clicked = "toggleShowSort">
+                        <SortByModal 
+                            activator = "sort"
+                            :noCoords = "true"
+                            @selected = "setSort"/>
+                    </ButtonWithIcon>
                 </div>
-                <Card 
+                <Card v-for="(unit, index) in units" :key="`unit_${index}`"
                     size="md" 
-                    :cardData="cardData" 
+                    :index="index"
                     :isMobile = isMobile
-                    contact
-                    @clicked-contact="showContactModal=true"></Card>
-                <Card 
-                    size="md" 
-                    :cardData="cardData" 
-                    :isMobile = isMobile
-                    contact
-                    @clicked-contact="showContactModal=true"></Card>
-                <Card 
-                    size="md" 
-                    :cardData="cardData" 
-                    :isMobile = isMobile
-                    contact
-                    @clicked-contact="showContactModal=true"></Card>
-                <Card 
-                    size="md" 
-                    :cardData="cardData" 
-                    :isMobile = isMobile
+                    :cardData="{
+                        floor:     unit.floor,
+                        habs:      unit.bedrooms,
+                        bathrooms: unit.bathrooms,
+                        slug:      unit.slug,
+                        m2:        unit.area,
+                        cost:      unit.cost,
+                        street:    unit.location.street,
+                        town:      unit.location.town,
+                        description: unit.description,
+                        pictures :   unit.pictures
+                    }" 
+  
                     contact
                     @clicked-contact="showContactModal=true"></Card>
             </div>
@@ -43,10 +53,10 @@
         </div>
         <ContactModal 
             v-if="showContactModal"
-            type="list"
-            :back="isMobile"
-            :close="!isMobile"
-            @close="showContactModal=false"/>
+            type   = "list"
+            :back  = "isMobile"
+            :close = "!isMobile"
+            @close = "showContactModal=false"/>
     </div>
 </template>
 
@@ -57,8 +67,10 @@ import ButtonWithIcon from '~/components/ButtonWithIcon.vue';
 import Menu           from '~/components/Menu.vue';
 import Card           from '~/components/Card.vue';
 import ContactModal   from '~/components/modals/ContactModal.vue';
+import SortByModal    from '~/components/modals/SortByModal.vue';
 
 import { Loader }     from '@googlemaps/js-api-loader';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
     components: {
@@ -66,6 +78,7 @@ export default {
         Menu,
         Card,
         ContactModal,
+        SortByModal,
         Sort
     },
 
@@ -74,47 +87,86 @@ export default {
             screenWidth: 0,
             screenHeight: 0,
             map: null,
-            numUnits: 4,
             showContactModal: false,
-            cardData: {
-                habs: 3,
-                bathrooms: 2,
-                m2: 150,
-                floor: 3,
-                pictures: [
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-8eaf9fa1.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-04f0ed44.jpg",   
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-a6954179.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-b733e4e4.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-25738f25.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-25e3cbdb.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-44275a4f.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-86f7f991.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-38cea40f.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-d9915573.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-c6a23989.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-7c298f27.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-cd7827e1.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-4c79ba54.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-d1f61ebb.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-6f5476ad.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-543e0dfe.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-4b6ff1ab.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-17b9ac2a.jpg",
-                    "https://witei-media.s3.amazonaws.com/pics/3941900-dedf2440.jpg"
-                ],
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, quis pariatur labore laudantium ducimus necessitatibus..."
+            showSort: false,
+            units: [],
+            sort: {
+                text: 'Más barato',
+                way:  1,
+                by:   'cost',
+            },
+            filters: {
+                minPrice: 0,
+                maxPrice: 1000,
+                minBedrooms: 1,
+                maxBedrooms: 3,
+                minBathrooms: 1,
+                maxBathrooms: 2,
+                contract: 'rent',
+                type: 'piso',
+                town: 'Barcelona',
+                neighborhood: 'Gracia',
             }
         }
     },
 
+    watch:{
+        changedSort(new_val, old_val){
+            console.log('foo')
+            this.refresh();
+        }
+    },
+
     computed:{
+        ...mapGetters(['activeModal', 'sortText', 'sortBy', 'sortByWay']),
+
+        location() {
+            if (this.$context.searchType == 'city') 
+                return this.$context.units[0].location.town
+
+            if (this.$context.searchType == 'district') 
+                return `${this.$context.units[0].location.district}, ${this.$context.units[0].location.town}`
+
+            if (this.$context.searchType == 'neighborhood') 
+                return `${this.$context.units[0].location.neighborhood}, ${this.$context.units[0].location.town}`
+        },
+
         isMobile() {
             return this.screenWidth > 0 && this.screenWidth < 431
         },
+
+        isEnough() {
+            const counter = {
+                available: 0,
+                total:     0
+            }
+            const conditions = this.$context.units.reduce((acc, curr) => {
+                acc.available += curr.status == 'available' ? 1 : 0;
+                acc.total     += 1;
+                return acc;
+            }, counter);
+
+            return conditions.available > 0 || conditions.total > 2;
+        },
+
+        changedSort() {
+            return this.sortBy + this.sortByWay + this.sortText;
+        },
+
     },
 
     methods: {
+        ...mapMutations(['setActiveModal', 'setSortByWay', 'setSortBy', 'setSortText']),
+
+        toggleShowSort() {
+            if (this.activeModal == 'sort') {
+                this.setActiveModal('');
+            }
+            else {
+                this.setActiveModal('sort');
+            }
+        },
+
         initMap() {
             this.map = new google.maps.Map(this.$refs.mapContainer, {
                 center: { lat: -34.397, lng: 150.644 },
@@ -152,6 +204,33 @@ export default {
             this.screenWidth  = window.innerWidth;
             this.screenHeight = window.innerHeight;
         },
+
+     
+
+        setSort(sortData) {
+            this.setSortText ( sortData.sortText);
+            this.setSortByWay( sortData.sortByWay);
+            this.setSortBy   ( sortData.sortBy);
+            this.setActiveModal('');
+        },
+
+        refresh(){
+            let result = this.units.sort((unit_a,unit_b) => {
+                return (unit_a[this.sortBy] - unit_b[this.sortBy]) * this.sortByWay
+            });
+            
+            this.units = [...result];
+        }
+    },
+
+    created() {
+        if (this.isEnough)
+            console.log('OK')
+        else
+            console.log('redirect')
+
+        this.units = [...this.$context.units]
+        this.refresh();
     },
 
     mounted() {
@@ -185,7 +264,6 @@ export default {
     min-height: 100vh;
     align-items: stretch;
     column-gap: 30px;
-    overflow-x: hidden;
 
     #list-content {
 
@@ -220,6 +298,8 @@ export default {
 
             &>svg {
                 align-self: center;
+                width: 1.25rem;
+                height: auto;
             }
 
             .button {

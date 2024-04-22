@@ -27,10 +27,15 @@
             <div class="content">
                 <div class="left-content">
                     <div class="breadcrumb">
-                        Barcelona Capital
-                        <ChevronRight /> Todos los barrios
+                        
+                        <template v-if="searchType == 'city' || searchType == 'district'">
+                            {{ location }} <ChevronRight /> Todos los barrios
+                        </template>
+                        <template v-else>
+                            {{ location.split(',')[1] }} <ChevronRight /> {{ location.split(',')[0] }}
+                        </template>
                     </div>
-                    <h1>foo bar</h1>
+                    <h1>{{ location }}</h1>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium, amet voluptatum? Et harum quo
                     architecto quam! Ad quia placeat sed commodi odit unde dolores quasi laborum? A molestiae alias
                     nesciunt, reprehenderit cumque vitae deleniti magni obcaecati ab mollitia temporibus. Adipisci
@@ -142,9 +147,9 @@
         </div>
 
         <div id="modals">
-                <ContractModal activator="contract" @selectedValue="changeContractText" />
+                <ContractModal activator="contract"    @selectedValue="changeContractText" />
                 <SearchResultsModal activator="search" @selectedValue="changeLocationText"/>
-                <KindModal activator="kind" @selectedValue="changeKindText" />
+                <KindModal activator="kind"            @selectedValue="changeKindText" />
                 <PriceModal activator="price" />
                 <BedroomsModal activator="bedrooms" />
                 <BathroomsModal activator="bathrooms" />
@@ -207,7 +212,18 @@ export default {
             type: Boolean,
             required: false,
             default: true
+        },
+        location: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        searchType: {
+            type: String,
+            required: false,
+            default: ''
         }
+
     },
 
     data() {
@@ -235,8 +251,7 @@ export default {
         },
 
         toggleModal(name) {
-            let activeModal = this.activeModal;
-            if (activeModal == name) {
+            if (this.activeModal == name) {
                 this.setActiveModal('');
             }
             else {
@@ -256,11 +271,6 @@ export default {
 
         changeLocationText() {
             
-            this.setActiveModal('');
-        },
-
-        changeContractText(text) {
-            this.contractText = text;
             this.setActiveModal('');
         },
 

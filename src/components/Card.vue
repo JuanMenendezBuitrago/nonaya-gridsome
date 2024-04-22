@@ -30,7 +30,7 @@
                      :style="{
                         transform: `translateX(${-currentPictureIndex*frameWidth}px)`
                      }" >
-                    <div  v-for="(picture,i) in pictures" :key="`pic${i}`"
+                    <div  v-for="(picture,i) in pictures" :key="`picture_${index}_${i}`"
                           class="picture"
                          :style="{width: `${frameWidth}px`, height: `${frameHeight}px`}">
                         <img 
@@ -43,10 +43,9 @@
         </div>
 
         <div class="data">
-            <h1 class="price">1.200€</h1>
+            <h1 class="price">{{ $formatCurrency(cardData.cost) }}</h1>
             <div class="location">
-                <Location/> Piso en Carrer de Berga<br v-if="size=='sm'">
-                Vila de Gràcia, Barcelona
+                <Location/> Piso en {{ cardData.street }}<br v-if="size=='sm'">, {{ cardData.town }}
             </div>
             <div v-if="size=='sm'" class="features">
                 <span>{{ cardData.habs }} habs.</span>
@@ -89,6 +88,11 @@ export default {
     },
 
     props: {
+        index: {
+            type: Number,
+            required: true,
+        },
+
         rented:{
             type:     Boolean,
             required: false,
@@ -125,7 +129,6 @@ export default {
 
     data(){
         return{
-            pictures: [],
             currentPictureIndex : 0,
             frameHeight: 0,
             frameWidth: 0,
@@ -164,23 +167,30 @@ export default {
         },
 
         pictureCount(){
-            return this.cardData.pictures.length;
+            return this.pictures.length;
         },
 
         last(){
-            return this.currentPictureIndex == (this.pictures - 1) ;
+            return this.currentPictureIndex == (this.pictures.length - 1) ;
         },
 
         first(){
             return this.currentPictureIndex == 0;
+        },
+
+        pictures() {
+            return this.cardData.pictures;
         }
+
     },
 
     methods: {
+
+
         handleCarrousel() {            
             this.frameHeight = this.$refs.frame.clientHeight;
             this.frameWidth  = this.$refs.frame.clientWidth;
-            this.pictures = this.cardData.pictures;
+            console.log('mounted')
 
         },
 
@@ -213,7 +223,7 @@ export default {
         },
 
         moreInfo(){
-
+            this.$router.push(`/${this.cardData.slug}`)
         }
     },
 
@@ -255,20 +265,20 @@ export default {
     overflow: hidden;
     font-size: 0.75rem;
 
-    
+    .button{
+        margin-top: 15px;
+    }
+
     &.size-sm{
         width: calc((75vw / 4) - 20px);
 
+      
         .pictures-frame{
             height: 150px
         }
 
         .picture{
             width: calc((75vw / 4) - 20px);
-        }
-
-        .data{
-            min-height: 150px;
         }
 
         .description{
@@ -279,11 +289,19 @@ export default {
     &.size-md{
         width: calc((100% - 15px) / 2);
         
-        height: 70vh;
+        height: auto;
         margin-bottom: 15px;
 
+        .description{
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            padding: 0;
+        }
+
         .pictures-frame{
-            flex: 1;
+            height: 200px;
         }
 
         .picture{
@@ -292,10 +310,6 @@ export default {
 
         .data{
             flex: 1;
-        }
-
-        .description{
-            padding-bottom: 20px;
         }
 
         .features{
@@ -431,12 +445,16 @@ export default {
 @media (max-width:430px) {
     .card.size-md{
         width: 100% !important;
-        height: 50vh;
+        height: auto;
+
+        .description{
+            display: none;
+        }
     }
 
     .card.size-sm{
         width: 55vw !important;
-        height: 35vh;
+        height: auto;
     }
 }
 </style>

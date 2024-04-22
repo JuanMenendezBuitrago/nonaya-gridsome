@@ -11,7 +11,7 @@
                 <div id="unit-header">
                     <div class="first-line">
                         <div>
-                            <span class="cost">{{ $page.unit.cost }}€</span><span v-if="$page.unit.contract == 'rent'"
+                            <span class="cost">{{ $formatCurrency($page.unit.cost) }}</span><span v-if="$page.unit.contract == 'rent'"
                                 class="mes">/mes</span>
                         </div>
                         <div class="code">
@@ -21,10 +21,10 @@
                         </div>
                     </div>
                     <div class="features">
-                        <Feature icon="room" :line1="bedrooms" />
+                        <Feature icon="room"     :line1="bedrooms" />
                         <Feature icon="bathroom" :line1="bathrooms" />
-                        <Feature icon="area" :line1="area" />
-                        <Feature icon="floor" :line1="floor" />
+                        <Feature icon="area"     :line1="area" />
+                        <Feature icon="floor"    :line1="floor" />
                     </div>
                 </div>
                 <div id="unit-content">
@@ -250,12 +250,144 @@ export default {
             type: 'detail',
             screenHeight: 0,
             screenWidth: 0,
+
             galleryIndexStart: 0,
             showGallery: false,
             showContactModal: false,
             contactType:'',
             maxWords: 100,
             showMore: false,
+
+            sections: {
+                features:{
+                    energy : {
+                        type: String ,
+                        title: 'Consumo de energía',
+                        values:['energy.certificate_display',
+                                'energy.consumption']
+                    },
+                    unit_type: {
+                        type: String,
+                        title: 'Tipo de inmueble',
+                        values:['kind']
+                    },
+                    elevator: {
+                        type: Boolean,
+                        title: 'Ascensor',
+                        values:['ascensor','escaleras']
+                    },
+                    condition: {
+                        type: String,
+                        title: 'Estado',
+                        values:['tag.finca reformada',
+                                'tag.a estrenar',
+                                'tag.obra nueva',
+                                'tag.buen estado',
+                                'tag.reformado',
+                                'tag.recién pintado']
+                    },
+                    furnished: {
+                        type: String,
+                        title: 'Amueblado',
+                        values:['tag.amueblado', 
+                                'tag.no amueblado', 
+                                'tag.semi-amueblado']
+                    },
+                    ac: {
+                        type: Boolean,
+                        title: 'Aire acondicionado',
+                        values:['tag.aire acondicionado']
+                    },
+                    heating: {
+                        type: String,
+                        title: 'Calefacción',
+                        values:['tag.calefacción individual: bomba de frío/calor',
+                                'tag.calefacción gas natural central',
+                                'tag.calefacción gas natural individual',
+                                'tag.calefacción eléctrica',
+                                'tag.calefacción gasoil',
+                                'tag.calefacción individual',
+                                'tag.calefacción central',
+                                'tag.aerotermia']
+                    },
+                    garden: {
+                        type: Boolean, //TODO
+                        title: 'Jardín',
+                        values:['tag.jardín',
+                                'tag.jardín comunitario',
+                                'tag.zona verde',]
+                    },
+                    patio: {
+                        type: Boolean, //TODO
+                        title: 'Patio comunitario',
+                        values:['tag.patio de uso']
+                    },
+                    balcony: {
+                        type: Boolean,
+                        title: 'Balcón',
+                        values:['tag.balcón']
+                    },
+                    terrace: {
+                        type: Boolean,
+                        title: 'Terraza',
+                        values:['tag.terraza']
+                    },
+                    pool: {
+                        type: Boolean,
+                        title: 'Piscina',
+                        values:['tag.piscina comunitaria',
+                                'tag.piscina']
+                    },
+                    parking: {
+                        type: String,
+                        title: 'Parking',
+                        values:['tag.edificio con garaje',
+                                'tag.plaza garaje incluida',]
+                    },
+                    storage: {
+                        type: String,
+                        title: 'Trastero',
+                        values:['tag.trastero',
+                                'tag.trastero incluido']
+                    }
+                }, 
+                conditions:{
+                    deposit: {
+                        type: String,
+                        title: 'Depósito',
+                        values:[]
+                    },
+                    pets: {
+                        type: Boolean,
+                        title: 'Mascotas',
+                        values:['tag.animales',
+                                'tag.no mascotas']
+                    },
+                    contract_type: {
+                        type: String,
+                        title: 'Tipo de contrato',
+                        values:[]
+                    }
+                },
+                description:{
+                    deposit: {
+                        type: String,
+                        values:['bedrooms']
+                    },
+                    pets: {
+                        type: Boolean,
+                        values:['bathrooms']
+                    },
+                    contract_type: {
+                        type: String,
+                        values:['area']
+                    },
+                    contract_type: {
+                        type: String,
+                        values:['floor']
+                    }
+                }
+            },
             cardData: {
                 habs: 3,
                 bathrooms: 2,

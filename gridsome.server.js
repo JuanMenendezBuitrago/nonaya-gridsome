@@ -4,20 +4,21 @@
 
 // Changes here require a server restart.
 // To restart press CTRL + C in terminal and run `gridsome develop`
-var slugify = require('slugify');
-var data =require('./src/data/house.json');
+let slugify = require('slugify');
+let jsonData = require('./src/data/house.json');
 
 
 module.exports = function (api) {
+
   api.loadSource(({ addCollection }) => {
     // Use the Data Store API here: https://gridsome.org/docs/data-store-api/
-
     const collection = addCollection('Unit')
 
-    for (const item of data) {
+    for (const item of jsonData) {
       let cost = item.renting ? item.renting_cost : (item.selling ? item.selling_cost : 'consultar');
       let contract = item.renting ? 'rent' : (item.selling ? 'sell' : 'consultar');
-      let slug = slugify(String(item.title), {lowercase: true});
+      let slug = slugify(String(item.title), { lowercase: true });
+
       collection.addNode({
         id: item.id,
         slug,
@@ -26,9 +27,12 @@ module.exports = function (api) {
         description: item.description,
         contract,
         cost,
+        tags: item.tags || [],
         kind: item.kind,
         location: {
           town: item.town,
+          neighborhood: item.neighborhood || '',
+          district: item.district || '',
           province: item.province,
           street: item.street,
           zip: item.zip_code,
@@ -45,32 +49,127 @@ module.exports = function (api) {
         energy: {
           consumption: item.energy_consumption,
           emission: item.energy_emission,
-          certificate_display:item.energy_certificate_display
+          certificate_display: item.energy_certificate_display
         }
-
-
       })
     }
   }),
 
-  api.createPages(({ createPage }) => {
-    // Use the Pages API here: https://gridsome.org/docs/pages-api/
-    createPage({
-      path: `/list`,
-      component: './src/templates/List.vue',
-      context:{
-        neighborhood: true
-      }
-    });
+    api.createPages(async ({ createPage, graphql }) => {
+      const MIN_UNITS = 3
+      const { data } = await graphql(`
+      {
+        allUnit {
+          edges {
+            node {
+              id,
+              slug,
+              status,
+              title,
+              description,
+              contract,
+              cost,
+              tags,
+              kind,
+              location {
+                neighborhood,
+                district,
+                town,
+                province,
+                street,
+                zip,
+                geo_lat,
+                geo_lng,
+              },
 
-    data.forEach(unit => {
-      createPage({
-        path: `/${slugify(String(unit.title))}`,
-        component: './src/templates/Unit.vue',
-        context: {
-          id: unit.id
+              bedrooms,
+              bathrooms,
+              floor,
+              area,
+              pictures,
+              videos,
+              energy {
+                consumption,
+                emission,
+                certificate_display,
+              }
+            }
+          }
         }
+      }
+    `);
+
+      const cities = data.allUnit.edges.reduce((acc, curr, index) => {
+        if (!acc[`${curr.node.location.town}`]) 
+          acc[`${curr.node.location.town}`] = [curr.node];
+        else 
+          acc[curr.node.location.town].push(curr.node)
+
+        if (curr.node.location.district) {
+          if(!acc[`${curr.node.location.town}_${curr.node.location.district}`]) 
+            acc[`${curr.node.location.town}_${curr.node.location.district}`]= [curr.node];
+          else
+            acc[`${curr.node.location.town}_${curr.node.location.district}`].push(curr.node)
+        }
+
+        if (curr.node.location.neighborhood){
+          if (!acc[`${curr.node.location.town}_${curr.node.location.district || '#'}_${curr.node.location.neighborhood}`]) 
+            acc[`${curr.node.location.town}_${curr.node.location.district || '#'}_${curr.node.location.neighborhood}`] = [curr.node];
+          else 
+            acc[`${curr.node.location.town}_${curr.node.location.district || '#'}_${curr.node.location.neighborhood}`].push(curr.node);
+        }
+        
+
+        return acc
+      }, {});
+
+
+      Object.keys(cities).forEach(c => {
+        [city, district, neighborhood] = c.split('_');
+
+        // cities
+        city && createPage({
+          path: `/${slugify(city.toLowerCase())}`,
+          component: './src/templates/List.vue',
+          context: {
+            city,
+            units: cities[city],
+            hero: true,
+            searchType: 'city'
+          },
+        });
+        // districts
+        (district && district != '#') && createPage({
+          path: `/${slugify(city.toLowerCase())}/${slugify(district.toLowerCase())}`,
+          component: './src/templates/List.vue',
+          context: {
+            city,
+            units: cities[`${city}_${district}`],
+            hero: true,
+            searchType: 'district',
+          },
+        });
+        // neighborhoods
+        neighborhood && createPage({
+          path: `/${slugify(city.toLowerCase())}/${district == '#' ? '' : slugify(district.toLowerCase())+'/'}${slugify(neighborhood.toLowerCase())}`,
+          component: './src/templates/List.vue',
+          context: {
+            city,
+            units: cities[`${city}_${district == '#' ? '' : district + '_'}${neighborhood}`],
+            hero: true,
+            searchType: 'neighborhood',
+          },
+        });
+      });
+
+      data.allUnit.edges.forEach(item => {
+        createPage({
+          path: `/${item.node.slug}`,
+          component: './src/templates/Detail.vue',
+          context: {
+            id: item.node.id
+          }
+        })
       })
     })
-  })
 }

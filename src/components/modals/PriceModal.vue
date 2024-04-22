@@ -10,7 +10,7 @@
                 <ButtonWithIcon 
                     :text="minPrice < 0 ? 'Mínimo' : formatPrice(minPrice)" 
                     icon="down" 
-                    reference="price-min"
+                    ref="price-min"
                     @clicked="togglePriceModal('price-min')">
                     <ListPricesModal 
                         activator="price-min" 
@@ -21,7 +21,7 @@
                 <ButtonWithIcon 
                     :text="maxPrice < 0 ? 'Máximo' : formatPrice(maxPrice)" 
                     icon="down"
-                    reference="price-max"
+                    ref="price-max"
                     @clicked="togglePriceModal('price-max')">
                     <ListPricesModal 
                         activator="price-max" 
@@ -88,7 +88,7 @@ export default {
         },
 
         formatPrice(value) {
-            let euro = Intl.NumberFormat('en-DE', {
+            let euro = Intl.NumberFormat('de-DE', {
                 style: 'currency',
                 currency: 'EUR',
                 minimumFractionDigits: 0,

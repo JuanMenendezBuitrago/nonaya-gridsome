@@ -79,7 +79,7 @@ export default {
         },
 
         blur() {
-            if(!this.activeModal == 'reference'){
+            if(!this.activeModal == 'ref'){
                 this.isFocussed = false;
                 this.$emit('blured');
             }
