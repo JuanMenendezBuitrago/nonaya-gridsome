@@ -22,3 +22,18 @@ $energy-d: #ebe622;
 $energy-e: #f0b418;
 $energy-f: #df7728;
 $energy-g: #e52e2a;
+
+$toggle-background-color-on: dodgerblue;
+$toggle-background-color-off: darkgray;
+$toggle-control-color: white;
+$toggle-width: 20px;
+$toggle-height: 10px;
+$toggle-gutter: 1px;
+$toggle-radius: 50%;
+$toggle-control-speed: .15s;
+$toggle-control-ease: ease-in;
+
+// These are our computed variables
+// change at your own risk.
+$toggle-radius: calc($toggle-height / 2);
+$toggle-control-size: calc($toggle-height - ($toggle-gutter * 2));
