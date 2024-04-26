@@ -16,7 +16,7 @@
                 :class="{'bathrooms-checkbox': true, checked: exact}" 
                 :style="{visibility: (bathrooms > 0) ? 'visible' : 'hidden'}" 
                 @click.stop="toggleCheckbox($event)">
-                <Checkbox :checked="exact"/> Número exacto de baños
+                <Checkbox :checked="exact"> Número exacto de baños</Checkbox>
             </div>
         </template>
 

@@ -8,7 +8,7 @@
                 <label>Mínimo</label>
                 <label>Máximo</label>
                 <ButtonWithIcon 
-                    :text="minPrice < 0 ? 'Mínimo' : formatPrice(minPrice)" 
+                    :text="minPriceText" 
                     icon="down" 
                     ref="price-min"
                     @clicked="togglePriceModal('price-min')">
@@ -16,17 +16,17 @@
                         activator="price-min" 
                         :show="showMinPrice"
                         zero
-                        @selected="setMin"/>
+                        @selected="closeMin"/>
                 </ButtonWithIcon>
                 <ButtonWithIcon 
-                    :text="maxPrice < 0 ? 'Máximo' : formatPrice(maxPrice)" 
+                    :text="maxPriceText" 
                     icon="down"
                     ref="price-max"
                     @clicked="togglePriceModal('price-max')">
                     <ListPricesModal 
                         activator="price-max" 
                         :show="showMaxPrice"
-                        @selected="setMax"/>
+                        @selected="closeMax"/>
                 </ButtonWithIcon>
             </div>
         </template>
@@ -74,6 +74,20 @@ export default {
     },
     computed:{
         ...mapGetters(['maxPrice', 'minPrice']),
+
+        minPriceText(){
+            if(this.minPrice === '') return 'Mínimo'
+            if(this.minPrice < 0)   return 'Sin Límite' 
+            
+            return this.$formatCurrency(this.minPrice)
+        },
+
+        maxPriceText(){
+            if(this.maxPrice === '') return 'Máximo'
+            if(this.maxPrice < 0)   return 'Sin Límite' 
+            
+            return this.$formatCurrency(this.maxPrice)
+        }
     },
     methods: {
         ...mapMutations(['setMaxPrice', 'setMinPrice']),
@@ -87,24 +101,11 @@ export default {
             }
         },
 
-        formatPrice(value) {
-            let euro = Intl.NumberFormat('de-DE', {
-                style: 'currency',
-                currency: 'EUR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-            });
-
-            return euro.format(value);
-        },
-
-        setMin(value){
-            this.setMinPrice(value);
+        closeMin(){
             this.showMinPrice = false;
         },
 
-        setMax(value){
-            this.setMaxPrice(value);
+        closeMax(){
             this.showMaxPrice = false;
         }
     }

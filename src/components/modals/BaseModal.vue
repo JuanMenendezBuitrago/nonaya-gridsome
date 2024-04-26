@@ -1,7 +1,9 @@
 <template>
     <div
         :style="styles"
-        :class="{modal: true, 
+        :class="{
+                ...getClasses,
+                modal: true, 
                 centered:centered, 
                 show: (show || isActive), 
                 'hide-overflow': hideOverflow 
@@ -33,6 +35,16 @@ export default {
             required: false
         },
 
+        classes:{
+            required: false,
+        },
+
+        relative: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
+
         centered: {
             type: Boolean,
             required: false,
@@ -49,13 +61,7 @@ export default {
             type: Boolean,
             required: false,
             default: false
-        },
-
-        noCoords: {
-            type: Boolean,
-            required: false,
-            default: false,
-        },
+        }
     },
 
     data() {
@@ -91,6 +97,11 @@ export default {
             'activeModal', 'scrolledPixels', 'touchDelta', 'showMaxPrice', 'showMinPrice'
         ]),
 
+        getClasses(){
+            if(this.classes)
+                return this.classes;
+        },
+
         isActive() {
             return this.activeModal == this.activator
         },
@@ -116,7 +127,6 @@ export default {
 
         findActivator() {
             let currentParent = this;
-            console.log(currentParent[this.activator])
 
             while (currentParent != null) {
                 if (currentParent.$refs && currentParent.$refs[this.activator]) {
@@ -140,7 +150,7 @@ export default {
         ...mapMutations(['setScrolledPixels']),
 
         setCoordinates() {
-            if(this.noCoords) return;
+            if(this.relative) return;
 
             let activator = this.findActivator
             this.top  = activator.getBoundingClientRect().bottom + window.scrollY;

@@ -7,7 +7,7 @@
                     :key="`type_${i}`" 
                     class="modal-list-item"
                     @click.stop="selectPrice(i)">
-                        {{ i == (prices.length - 1 ) && !zero ? price : formatPrice(price) }}
+                        {{ i == (prices.length - 1 ) && !zero ? price : $formatCurrency(price) }}
                 </div>
             </div>
         </template>
@@ -50,6 +50,7 @@ export default {
 
     computed:{
         ...mapGetters(['maxPrice', 'minPrice', 'showMaxPrice', 'showMinPrice']),
+
         prices(){
             let result1 = Array(19).fill().map((item, i) =>  {
                 return (i+2)*50
@@ -62,6 +63,15 @@ export default {
             else
                 result3 = [...result3, 'Sin límite'];
             
+
+            if(this.activator == 'price-min' && this.maxPrice > 0){
+                return [...result1, ...result2, ...result3].filter(price => price < this.maxPrice)
+            }
+
+            if(this.activator == 'price-max' && this.minPrice > 0){
+                return [...result1, ...result2, ...result3].filter(price => price > this.minPrice || price == 'Sin límite')
+            }
+
             return [...result1, ...result2, ...result3]
         }
     },
@@ -69,20 +79,16 @@ export default {
     methods: {
         ...mapMutations(['setMaxPrice', 'setMinPrice', 'setShowMaxPrice', 'setShowMinPrice']),
 
-        formatPrice(value) {
-            let euro = Intl.NumberFormat('de-DE', {
-                style: 'currency',
-                currency: 'EUR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-            });
-
-            return euro.format(value);
-        },
-
         selectPrice(i) {
-            this.value = (i == (this.prices.length - 1 ) ? -1 : this.prices[i]);
-            this.$emit('selected', this.value)
+            if(this.activator == 'price-max'){
+                this.value = (i == (this.prices.length - 1 ) ? -1 : this.prices[i]);
+                this.setMaxPrice(this.value);
+            } else if(this.activator == 'price-min'){
+                this.value = this.prices[i];
+                this.setMinPrice(this.value);
+            }
+
+            this.$emit('selected')
         }
     }
 }

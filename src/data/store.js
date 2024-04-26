@@ -17,15 +17,29 @@ export default new Vuex.Store({
     query:            '',
     queryResults:     '',
     touchDelta:       0,
-      
-    filter_maxPrice:     0,
-    filter_minPrice:     0,
+    contractText:     '',
+    rentText:         '',
+    kindText:         '',
+
+    filter_rentType:     '',
+    filter_maxPrice:     '',
+    filter_minPrice:     '',
     filter_contract:     '',
     filter_kind:         '',
     filter_bedrooms:     0,
     filter_bathrooms:    0,
     filter_city:         '',
     filter_neighborhood: '',
+    filter_apartment_all:    false,
+    filter_apartment_atic:   false,    
+    filter_apartment_first:  false, 
+    filter_apartment_middle: false,
+    filter_house_all:        false,
+    filter_house_rustic:     false,    
+    filter_house_terraced:   false,    
+    filter_house_chalet:     false, 
+    filter_new:              false,    
+    'filter_second-hand':    false,        
 
     sort_text:           '',
     sort_direction:      '',
@@ -35,6 +49,23 @@ export default new Vuex.Store({
 
   mutations: {
     // Define your mutations here
+    setRentText(state, payload){
+        state.rentText = payload;
+    },
+
+    setRentType(state, payload){
+        state.filter_rentType = payload;
+    },
+
+
+    setContractText(state, payload){
+        state.contractText = payload;
+    },
+
+    setKindText(state, payload){
+        state.kindText = payload;
+    },
+    
     setContract(state, payload){
         state.filter_contract = payload;
     },
@@ -99,6 +130,45 @@ export default new Vuex.Store({
         state.queryResults = payload;
     },
 
+    setApartmentAll(state, payload) {
+        state.filter_apartment_all = payload;
+    },
+
+    setApartmentAtic(state, payload){
+        state.filter_apartment_atic = payload;
+    },
+
+    setApartmentFirst(state, payload){
+        state.filter_apartment_first = payload;
+    },
+
+    setApartmentMiddle(state, payload){
+        state.filter_apartment_middle = payload;
+    },
+
+    setHouseAll(state, payload){
+        state.filter_house_all = payload;
+    },
+
+    setHouseRustic(state, payload){
+        state.filter_house_rustic = payload;
+    },
+
+    setHouseTerraced(state, payload){
+        state.filter_house_terraced = payload;
+    },
+
+    setHouseChalet(state, payload){
+        state.filter_house_chalet = payload;
+    },
+
+    setIsNew(state, payload){
+        state.filter_new = payload;
+    },
+
+    setSecondHand(state, payload){
+        state['filter_second-hand'] = payload;
+    }
   },
 
   actions: {
@@ -107,12 +177,68 @@ export default new Vuex.Store({
 
   getters: {
     // Define your getters here
-  
+    apartmentAll(state, getters) {
+        return state.filter_apartment_all;
+    },
+
+    apartmentAtic(state, getters){
+        return state.filter_apartment_atic;
+    },
+
+    apartmentFirst(state, getters){
+        return state.filter_apartment_first;
+    },
+
+    apartmentMiddle(state, getters){
+        return state.filter_apartment_middle;
+    },
+
+    houseAll(state, getters){
+        return state.filter_house_all;
+    },
+
+    houseRustic(state, getters){
+        return state.filter_house_rustic;
+    },
+
+    houseTerraced(state, getters){
+        return state.filter_house_terraced;
+    },
+
+    houseChalet(state, getters){
+        return state.filter_house_chalet;
+    },
+
+    isNew(state, getters){
+        return state.filter_new;
+    },
+
+    secondHand(state, getters){
+        return state['filter_second-hand'];
+    },
+
     contract(state, getters){
         return state.filter_contract;
     },
+    
     kind(state, getters){
         return state.filter_kind;
+    },
+
+    rentText(state, getters){
+        return state.rentText;
+    },
+
+    rentType(state, getters){
+        return state.filter_rentType;
+    },
+
+    contractText(state, getters){
+        return state.contractText;
+    },
+    
+    kindText(state, getters){
+        return state.kindText;
     },
 
     bedrooms(state, getters){

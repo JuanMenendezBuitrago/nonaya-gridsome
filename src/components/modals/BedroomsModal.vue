@@ -12,10 +12,10 @@
             </div>
             <div 
                 class="bedrooms-checkbox" 
-                :class="{checked: exact}" 
+
                 :style="{visibility : (bedrooms > 0) ? 'visible' : 'hidden'}" 
                 @click.stop="toggleCheckbox($event)">
-                <Checkbox :checked="exact"/> Número exacto de habitaciones
+                <Checkbox :checked="exact"> Número exacto de habitaciones</Checkbox>
             </div>
         </template>
         <template v-slot:footer>
@@ -160,11 +160,7 @@ export default {
         }
     }
 
-    &.checked{
-        path{
-            fill: $orange;
-        }
-    }
+
 }
 
 

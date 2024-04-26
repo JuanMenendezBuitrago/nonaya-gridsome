@@ -1,38 +1,157 @@
 <template>
-    <BaseModal 
-        :activator="activator" 
-        :hideOverflow="true"
-        centered>
+    <BaseModal :activator="activator" :hideOverflow="false" :centered="$isMobile()" :classes="{ 'filters-modal': true }">
 
         <template v-slot:header>
             <h1>Filtros</h1>
-        </template>       
-        
+        </template>
+
         <template v-slot:body>
-            <div 
-                v-for="kind, i in kinds" 
-                :key="`type_${i}`" 
-                class="modal-list-item"
-                @click.stop="selectKind(kind.key)">{{ kind.text }}</div>
+            <div class="filters-grid">
+                <div>
+                    <template v-if="contract == 'rent'">
+                        <h1>Tipo de alqiler</h1>
+                        <ButtonWithIcon 
+                            :text="rentText == '' ? 'Selecciona' : rentText" 
+                            icon="down" 
+                            ref="rent"
+                            @clicked="toggleModal('rent')">
+                            <RentModal 
+                                :show="active == 'rent'"
+                                :relative="true"
+                                activator="rent"
+                                @selected="close"/>
+                    </ButtonWithIcon>
+                    </template>
+                </div>
+
+                
+                <div>
+                    <h1>Tipo de inmueble</h1>
+                    <ButtonWithIcon 
+                        :text="kindText == '' ? 'Tipo de inmueble' : kindText"
+                        icon="down" 
+                        ref="kind"
+                        @clicked="toggleModal('kind')">
+                        <KindModal 
+                            :show="active == 'kind'"
+                            activator="kind"
+                            @selected="close"/>
+                    </ButtonWithIcon>
+                </div>
+
+                <hr class="full-width"/>
+
+                <h1 class="full-width">Tipo de construcción</h1>
+                <div class="checkbox"
+                @click.stop="toggle('secondHand')"">
+                    <Checkbox  :checked="secondHand"> segunda mano</Checkbox>
+                </div>
+                <div class="checkboxs"
+                @click.stop="toggle('isNew')">
+                    <Checkbox :checked="isNew"> obra nueva</Checkbox>
+                </div>
+
+                <hr class="full-width"/>
+
+                <label >Mínimo</label>
+                <label >Máximo</label>
+                <ButtonWithIcon 
+                    :text="minPriceText" 
+                    icon="down" 
+                    ref="price-min"
+                    @clicked="toggleModal('price-min')">
+                    <ListPricesModal 
+                        activator="price-min" 
+                        :show="active == 'price-min'"
+                        zero
+                        @selected="close"/>
+                </ButtonWithIcon>
+                <ButtonWithIcon 
+                    :text="maxPriceText" 
+                    icon="down" 
+                    ref="price-max"
+                    @clicked="toggleModal('price-max')">
+                    <ListPricesModal 
+                        activator="price-max"
+                        :show="active == 'price-max'"
+                        @selected="close"/>
+                </ButtonWithIcon>
+                <hr class="full-width"/>
+                <h1 class="full-width">Tipo de vivienda</h1>
+                <section>
+                    <div class="checkbox"
+                    @click.stop="toggle('apartmentAll')">
+                        <Checkbox :checked="apartmentAll"> todos los pisos</Checkbox>
+                    </div>
+                    <div class="checkbox indent"
+                    @click.stop="toggle('apartmentMiddle')">
+                        <Checkbox
+                        :checked="apartmentMiddle || apartmentAll"> plantas intermedias</Checkbox>
+                    </div>
+                    <div class="checkbox indent"
+                    @click.stop="toggle('apartmentFirst')">
+                        <Checkbox
+                        :checked="apartmentFirst || apartmentAll"> apartamento</Checkbox>
+                    </div>
+                    <div class="checkbox indent"
+                    @click.stop="toggle('apartmentAtic')">
+                        <Checkbox
+                        :checked="apartmentAtic || apartmentAll"> ático</Checkbox>
+                    </div>
+                </section>
+                <section>
+                    <div class="checkbox"
+                    @click.stop="toggle('houseAll')">
+                        <Checkbox
+                        :checked="houseAll"
+                        > todas las casas</Checkbox>
+                    </div>
+                    <div class="checkbox indent"
+                    @click.stop="toggle('houseChalet')">
+                        <Checkbox
+                        :checked="houseChalet || houseAll"> casa o chalet</Checkbox>
+                    </div>
+                    <div class="checkbox indent"
+                    @click.stop="toggle('houseRustic')">
+                        <Checkbox
+                        :checked="houseRustic || houseAll"> finca rústica</Checkbox>
+                    </div>
+                    <div class="checkbox indent"
+                    @click.stop="toggle('houseTerraced')">
+                        <Checkbox
+                        :checked="houseTerraced || houseAll"> casa adosada</Checkbox>
+                    </div>
+                </section>
+            </div>
         </template>
 
         <template v-slot:footer>
-            <Button flat solid >Mostrar viviendas</Button>
+            <Button flat solid>Mostrar viviendas</Button>
         </template>
-    </BaseModal>        
+    </BaseModal>
 </template>
 
 <script>
-import BaseModal from './BaseModal.vue';
-import Button          from '../Button.vue';
-import { mapMutations } from 'vuex';
+import BaseModal        from './BaseModal.vue';
+import Button           from '../Button.vue';
+import Checkbox         from '~/components/icons/Checkbox.vue';
+import ListPricesModal  from '~/components/modals/ListPricesModal.vue';
+import KindModal        from '~/components/modals/KindModal.vue';
+import RentModal        from '~/components/modals/RentModal.vue';
+import ButtonWithIcon   from '~/components/ButtonWithIcon.vue';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
     name: 'FiltersModal',
 
     components: {
         BaseModal,
-        Button
+        Button,
+        Checkbox,
+        ListPricesModal,
+        ButtonWithIcon,
+        RentModal,
+        KindModal
     },
 
     props: {
@@ -41,34 +160,89 @@ export default {
             required: false
         }
     },
-    
-    data(){
+
+    data() {
         return {
-            kinds: [{
-                key: 'casa',
-                text: 'Casa'
-            },
-            {
-                key: 'piso',
-                text: 'Piso'
-            },
-            {
-                key: 'duplex',
-                text: 'Duplex'
-            }]
+            active:'',
         }
     },
 
-    methods: {
-        ...mapMutations(['setKind']),
+    computed:{
+        ...mapGetters(['maxPrice', 'minPrice', 'contract', 'rentText', 'kindText', 'apartmentAll', 'apartmentAtic', 'apartmentFirst', 'apartmentMiddle','houseAll', 'houseRustic', 'houseTerraced', 'houseChalet', 'isNew', 'secondHand' ]),
 
-        selectKind(value) {
-            let text = this.kinds.find(item => {
-                return item.key == value;
-            });
+        minPriceText(){
+            if(this.minPrice === '') return 'Mínimo'
+            if(this.minPrice < 0)   return 'Sin Límite' 
             
-            this.setKind(value);
-            this.$emit('selectedValue',text.text)
+            return this.$formatCurrency(this.minPrice)
+        },
+
+        maxPriceText(){
+            if(this.maxPrice === '') return 'Máximo'
+            if(this.maxPrice < 0)   return 'Sin Límite' 
+            
+            return this.$formatCurrency(this.maxPrice)
+        }
+
+    },
+    methods: {
+        ...mapMutations(['setKind','setMaxPrice', 'setMinPrice', 'setApartmentAll', 'setApartmentAtic', 'setApartmentFirst', 'setApartmentMiddle', 'setHouseAll', 'setHouseRustic', 'setHouseTerraced', 'setHouseChalet', 'setIsNew', 'setSecondHand']),
+
+        toggleModal(name) {
+            if (this.active == '' || this.active != name){
+                this.active = name;
+                return;
+            } 
+            
+            console.log(name, this.active)
+            if (this.active == name)
+                this.active = '';
+        },
+
+        toggle(name){
+            if (name == 'apartmentAll'){
+                this.setApartmentAll(!this.apartmentAll)
+            }
+            
+            if (name == 'apartmentAtic'){
+                this.setApartmentAtic(!this.apartmentAtic)
+            }
+            
+            if (name == 'apartmentFirst'){
+                this.setApartmentFirst(!this.apartmentFirst)
+            }
+            
+            if (name == 'apartmentMiddle'){
+                this.setApartmentMiddle(!this.apartmentMiddle)
+            }
+            
+            if (name == 'houseAll'){
+                this.setHouseAll(!this.houseAll)
+            }
+            
+            if (name == 'houseRustic'){
+                this.setHouseRustic(!this.houseRustic)
+            }
+            
+            if (name == 'houseTerraced'){
+                this.setHouseTerraced(!this.houseTerraced)
+            }
+            
+            if (name == 'houseChalet'){
+                this.setHouseChalet(!this.houseChalet)
+            }
+            
+            if (name == 'isNew'){
+                this.setIsNew(!this.isNew)
+            }
+            
+            if (name == 'secondHand'){
+                this.setSecondHand(!this.secondHand)
+            }
+            
+        },
+        close(){
+            this.active = '';
         }
     }
 }
@@ -77,15 +251,51 @@ export default {
 <style lang="scss">
 @import '~/assets/variables.scss';
 
-.modal-list-item{
-    font-size: 0.8rem;
-    padding: calc(5px + 0.3rem) calc(10px + 0.8rem);
-    cursor: pointer;
+.filters-modal {
+    width: 350px;
 
-    &:hover{
-        background-color: $orange;
-        color: white;
+    .modal-body {
+
+        h1,
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+    }
+    
+    hr{
+        width: 100%;
+        height: 1px;
+        border: none;
+        border-top: 1px solid $gray-light;
+        margin-block: 20px 15px;
     }
 }
 
+.filters-grid {
+    display: grid;
+    margin: 10px;
+    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+
+    >.full-width {
+        grid-column: 1 / -1;
+    }
+
+    section {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: 6px;
+    }
+}
+
+
+.checkbox {
+    font-size: 0.8rem;
+
+    &.indent {
+        padding-left: 10px;
+    }
+}
 </style>

@@ -3,7 +3,7 @@
         :activator="activator" 
         :show="show" 
         :hideOverflow="true"
-        :noCoords="noCoords">
+        :relative="relative">
         <template v-slot:body>
             <div v-for="value, i in values" :key="`sort_${i}`" class="modal-list-item"
                 @click.stop="$emit('selected', value)">
@@ -24,7 +24,7 @@ export default {
     },
 
     props: {
-        noCoords: {
+        relative: {
             type: Boolean,
             required: false,
             default: false,

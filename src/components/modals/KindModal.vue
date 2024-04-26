@@ -1,5 +1,8 @@
 <template>
-    <BaseModal :activator="activator" :hideOverflow="true">
+    <BaseModal 
+        :activator="activator" 
+        :show="show"
+        :hideOverflow="true">
         <template v-slot:body>
             <div 
                 v-for="kind, i in kinds" 
@@ -22,6 +25,12 @@ export default {
     },
 
     props: {
+        show: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+        
         activator: {
             type: String,
             required: false
@@ -31,22 +40,39 @@ export default {
     data(){
         return {
             kinds: [{
-                key: 'casa',
-                text: 'Casa'
+                key: 'vivienda',
+
+                text: 'Vivienda'
             },
             {
-                key: 'piso',
-                text: 'Piso'
+                key: 'bajo',
+                text: 'Bajo'
             },
             {
                 key: 'duplex',
                 text: 'Duplex'
+            },
+            {
+                key: 'estudio',
+                text: 'Estudio'
+            },
+            {
+                key: 'casa',
+                text: 'Casa'
+            },
+            {
+                key: 'local',
+                text: 'Local'
+            },
+            {
+                key: 'garaje',
+                text: 'Garaje'
             }]
         }
     },
 
     methods: {
-        ...mapMutations(['setKind']),
+        ...mapMutations(['setKind', 'setKindText']),
 
         selectKind(value) {
             let text = this.kinds.find(item => {
@@ -54,6 +80,7 @@ export default {
             });
             
             this.setKind(value);
+            this.setKindText(text.text);
             this.$emit('selectedValue',text.text)
         }
     }

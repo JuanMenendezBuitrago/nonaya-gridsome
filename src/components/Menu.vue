@@ -84,8 +84,8 @@
             <div id="filters-2" ref="filters">
                 <ButtonWithIcon 
                 icon="down" 
-                :text="contractText == '' ? 'Contrato' : contractText"
-                :selected="contractText == '' ? false : true" 
+                :text="this.contractText == '' ? 'Contrato' : this.contractText"
+                :selected="this.contractText == '' ? false : true" 
                 reference="contract" 
                 ref="contract" 
                 @clicked="toggleModal('contract')"/>
@@ -99,8 +99,8 @@
     
                 <ButtonWithIcon 
                 icon="down" 
-                :text="kindText == '' ? 'Tipo de inmueble' : kindText"
-                :selected="kindText == '' ? false : true" 
+                :text="this.kindText == '' ? 'Tipo de inmueble' : this.kindText"
+                :selected="this.kindText == '' ? false : true" 
                 ref="kind" 
                 reference="kind" 
                 @clicked="toggleModal('kind')"/>
@@ -128,7 +128,7 @@
                 
                 <ButtonWithIcon 
                 icon="filter" 
-                text="Filtros" 
+                text="Más filtros" 
                 ref="search-filters"
                 reference="search-filters"
                 :count="filterCount" 
@@ -229,14 +229,12 @@ export default {
     data() {
         return {
             filterCount: 1,
-            contractText: '',
-            kindText: '',
             touchDelta: 0,
         }
     },
 
     computed: {
-        ...mapGetters(['activeModal', 'searchQuery'])
+        ...mapGetters(['activeModal', 'searchQuery', 'kindText', 'contractText'])
     },
 
     methods: {
@@ -259,13 +257,11 @@ export default {
             }
         },
 
-        changeKindText(text) {
-            this.kindText = text;
+        changeKindText() {
             this.setActiveModal('');
         },
 
-        changeContractText(text) {
-            this.contractText = text;
+        changeContractText() {
             this.setActiveModal('');
         },
 

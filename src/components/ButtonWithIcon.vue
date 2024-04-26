@@ -108,7 +108,7 @@ export default {
     justify-content: space-between;
 
     white-space: nowrap;
-    column-gap: 0.5rem;
+    column-gap: 6px;
 
     border: 1px solid $gray;
     border-radius: 3px;
@@ -118,7 +118,7 @@ export default {
     color: $black;
 
     svg {
-        width: 1.25rem;
+        width: 1.15rem;
         height: auto;
 
         path {

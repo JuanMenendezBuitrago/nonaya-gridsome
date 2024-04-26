@@ -1,14 +1,15 @@
 <template>
     <BaseModal 
         :activator="activator" 
+        :relative="relative"
         :show="show" 
         :hideOverflow="true">
 
         <template v-slot:body>
             <div 
-                v-for="contractData, i in contractTypes" :key="`type_${i}`" 
+                v-for="rentType, i in rentTypes" :key="`type_${i}`" 
                 class="modal-list-item"
-                @click.stop="selectContract(contractData.key)">{{ contractData.text }}</div>
+                @click.stop="selectRentType(rentType.key)">{{ rentType.text }}</div>
         </template>
 
     </BaseModal>
@@ -19,13 +20,18 @@ import BaseModal        from './BaseModal.vue';
 import { mapMutations } from 'vuex';
 
 export default {
-    name: 'ContractModal',
+    name: 'RentModal',
 
     components: {
         BaseModal
     },
 
     props: {
+        relative:{
+            type: Boolean,
+            required: false,
+            default: false,
+        },
         show: {
             type: Boolean,
             required: false,
@@ -41,26 +47,26 @@ export default {
     data(){
         return {
             value:'',
-            contractTypes: [{
-                text: 'Venta',
-                key: 'sell'            
+            rentTypes: [{
+                text: 'Vivienda habitual',
+                key: 'vivienda'            
             },
             {
-                text: 'Alquiler',
-                key: 'rent'            
+                text: 'Alquiler de temporada',
+                key: 'temporada'            
             }]
         }
     },
     methods: {
-        ...mapMutations(['setContract', 'setContractText']),
+        ...mapMutations(['setRentType', 'setRentText']),
 
-        selectContract(value) {
-            let text = this.contractTypes.find(item => {
+        selectRentType(value) {
+            let selected = this.rentTypes.find(item => {
                 return item.key == value;
             });
-            this.setContract(value);
-            this.setContractText(text.text);
-            this.$emit('selectedValue')
+            this.setRentType(selected.key);
+            this.setRentText(selected.text);
+            this.$emit('selected')
         }
     }
 }
