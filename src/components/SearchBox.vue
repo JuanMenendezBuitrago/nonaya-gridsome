@@ -63,11 +63,20 @@ export default {
         text(newValue, oldValue) {
             this.setQuery(newValue);
             this.performSearch();
+        },
+
+        location(newValue, oldValue){
+            console.log('location: ' + newValue);
+            this.text = newValue;
         }
     },
 
     computed: {
-        ...mapGetters(['query', 'city', 'neighborhood', 'activeModal'])
+        ...mapGetters(['query', 'city', 'neighborhood', 'activeModal']),
+
+        location() {
+            return(`${this.city}, ${this.neighborhood}`);
+        }
     },
 
     methods: {
@@ -75,13 +84,20 @@ export default {
 
         focus() {
             this.isFocussed = true;
+            if (this.query){
+                this.text = this.query;
+            }
             this.$emit('focussed');
         },
 
         blur() {
-            if(!this.activeModal == 'ref'){
-                this.isFocussed = false;
+            this.isFocussed = false;
+            if(!this.activeModal == 'search'){
                 this.$emit('blured');
+            }else{
+                if(this.city && this.neighborhood){
+                    this.text = `${this.city}, ${this.neighborhood}`
+                }
             }
         },
 
@@ -144,13 +160,19 @@ export default {
         border-radius: 3px;
         background-color: $gray-lighter;
 
-        &.focus {
+        &.isFocussed {
             border-color: $orange;
             background-color: $orange-light;
+            justify-content: flex-start;
 
             input {
                 background-color: $orange-light;
                 color: $orange;
+                text-align: start;
+                
+                &::placeholder{ 
+                    color: $orange;
+                }
             }
 
             svg {
@@ -162,6 +184,8 @@ export default {
 
         input {
             border-style: none;
+            flex: 1;
+            text-align: center;
             border-width: 0;
             background-color: $gray-lighter;
             font-size: 0.8rem;

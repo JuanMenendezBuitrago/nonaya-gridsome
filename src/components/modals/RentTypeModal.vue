@@ -1,19 +1,23 @@
 <template>
     <BaseModal :activator="activator" :centered="$isMobile()" :show="show" :hideOverflow="true">
+
         <template v-slot:body>
-            <div v-for="kind, i in kinds" :key="`type_${i}`" class="modal-list-item" @click.stop="selectKind(kind.value)">
-                {{ kind.text }}<Check :checked="isSelected(kind.value)" /></div>
+            <div v-for="rentTypeData, i in rentTypes" :key="`type_${i}`" class="modal-list-item"
+                @click.stop="selectRentType(rentTypeData.value)">{{ rentTypeData.text }}
+                <Check :checked="isSelected(rentTypeData.value)" />
+            </div>
         </template>
+
     </BaseModal>
 </template>
 
 <script>
 import BaseModal from './BaseModal.vue';
-import Check     from '../icons/Check.vue';
+import Check from '../icons/Check.vue';
 import { mapMutations, mapGetters } from 'vuex';
 
 export default {
-    name: 'KindModal',
+    name: 'RentTypeModal',
 
     components: {
         BaseModal,
@@ -35,63 +39,42 @@ export default {
 
     data() {
         return {
-            kinds: [{
-                value: 'vivienda',
-                text: 'Vivienda'
+            value: '',
+            rentTypes: [{
+                text: 'Vivienda habitual',
+                value: 'permanent'
             },
             {
-                value: 'bajo',
-                text: 'Bajo'
-            },
-            {
-                value: 'duplex',
-                text: 'Duplex'
-            },
-            {
-                value: 'estudio',
-                text: 'Estudio'
-            },
-            {
-                value: 'casa',
-                text: 'Casa'
-            },
-            {
-                value: 'local',
-                text: 'Local'
-            },
-            {
-                value: 'garaje',
-                text: 'Garaje'
+                text: 'Alquiler de temporada',
+                value: 'season'
             }]
         }
     },
-
     computed: {
-        ...mapGetters(['kind'])
+        ...mapGetters(['rentType'])
     },
 
     methods: {
-        ...mapMutations(['setKind', 'setKindText']),
+        ...mapMutations(['setRentType', 'setRentText']),
 
         isSelected(value) {
-            return value == this.kind;
+            return value == this.rentType;
         },
 
-        selectKind(value) {
-            if(this.kind == value){
-                this.setKind('')
-                this.setKindText('')
+        selectRentType(value) {
+            if(this.rentType == value){
+                this.setRentType('')
+                this.setRentText('')
                 this.$emit('selectedValue');
                 return;
             }
-
-            let kind = this.kinds.find(item => {
+          
+            let type = this.rentTypes.find(item => {
                 return item.value == value;
             });
-
-            this.setKind(kind.value);
-            this.setKindText(kind.text);
-            this.$emit('selectedValue', kind.text)
+            this.setRentType(type.value);
+            this.setRentText(type.text);
+            this.$emit('selectedValue');
         }
     }
 }

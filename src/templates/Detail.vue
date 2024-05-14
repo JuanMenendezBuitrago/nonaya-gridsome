@@ -53,12 +53,12 @@
                 <div id="unit-features">
                     <h1 class="title">Caracterísiticas</h1>
                     <Feature icon="kind" line1="Tipo de inmueble" :line2="$page.unit.kind" />
-                    <Feature icon="condition" line1="Estado" line2="foo" />
-                    <Feature icon="heating" line1="Calefacción" line2="bar" />
-                    <Feature icon="elevator" line1="Ascensor" line2="baz" />
-                    <Feature icon="furnished" line1="Amueblado" line2="foo bar" />
-                    <Feature icon="ac" line1="Aire acondicionado" line2="bar" />
-                    <Feature icon="energy" line1="Consumo de energía"
+                    <Feature icon="condition" line1="Estado" line2="Buen estado" />
+                    <Feature icon="heating" line1="Calefacción" line2="Bomba de calor" />
+                    <Feature icon="elevator" line1="Ascensor" line2="Sí" />
+                    <Feature icon="furnished" line1="Amueblado" line2="Sí" />
+                    <Feature icon="ac" line1="Aire acondicionado" line2="No" />
+                    <Feature v-if="$page.unit.energy.consumption" icon="energy" line1="Consumo de energía"
                         :line2="$page.unit.energy.consumption + 'Mw h m<sup>2</sup>/año'" />
 
                     <div id="pills">
@@ -73,9 +73,9 @@
 
                 <div id="unit-conditions">
                     <h1 class="title">Condiciones de{{ tipoContrato }}</h1>
-                    <Feature icon="euro" line1="Fianza" line2="foo" />
-                    <Feature icon="hourglass" line1="Tipo de contrato" line2="bar" />
-                    <Feature icon="paw" line1="Admite mascotas" line2="foo" />
+                    <Feature icon="euro" line1="Fianza" line2="2 meses" />
+                    <Feature icon="hourglass" line1="Tipo de contrato" line2="Temporada" />
+                    <Feature icon="paw" line1="Admite mascotas" line2="Sí" />
                 </div>
 
                 <div v-if="!isMobile" id="unit-location">
@@ -97,7 +97,7 @@
 
         <div id="same-neighborhood">
             <div class="same-neighborhood-header">
-                <h1 class="title">Inmuebles en Gracia</h1>
+                <h1 class="title">Otros inmuebles en {{ $page.unit.location.neighborhood }}</h1>
                 <div class="buttons">
                     <RoundButton icon="left" />
                     <RoundButton icon="right" />
@@ -105,17 +105,17 @@
             </div>
             <div class="cards-overflow">
                 <div class="cards">
-                    <Card size="sm" :cardData="cardData"></Card>
-                    <Card size="sm" :cardData="cardData"></Card>
-                    <Card size="sm" :cardData="cardData"></Card>
-                    <Card size="sm" :cardData="cardData"></Card>
+                    <Card :index="0" size="sm" :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}"></Card>
+                    <Card :index="1" size="sm" :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}"></Card>
+                    <Card :index="2" size="sm" :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}"></Card>
+                    <Card :index="3" size="sm" :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}"></Card>
                 </div>
             </div>
         </div>
 
         <div id="history">
             <div class="history-header">
-                <h1 class="title">Viviendas alquiladas recientemente en Gracia
+                <h1 class="title">Viviendas alquiladas recientemente en {{ $page.unit.location.neighborhood }} [Si no hubiera resultados]
                     <div class="history-subheader">
                         En este momento, no disponemos de más viviendas que coincidan con tus preferencias.<br>
                         Sin embargo, te mostramos algunas opciones que han sido alquiladas recientemente.
@@ -130,23 +130,27 @@
             <div class="cards-overflow">
                 <div class="cards">
                     <Card 
+                        :index="0"
                         size="sm" 
-                        :cardData="cardData" 
+                        :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}" 
                         rented 
                         grayscale></Card>
                     <Card 
+                        :index="1"
                         size="sm" 
-                        :cardData="cardData" 
+                        :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}" 
                         rented 
                         grayscale></Card>
                     <Card 
+                        :index="2"
                         size="sm" 
-                        :cardData="cardData" 
+                        :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}" 
                         rented 
                         grayscale></Card>
                     <Card 
+                        :index="3"
                         size="sm" 
-                        :cardData="cardData" 
+                        :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}" 
                         rented 
                         grayscale></Card>
                 </div>
@@ -195,6 +199,7 @@ query Unit($id: ID!) {
     floor,
     pictures,
     location{
+        neighborhood,
         town,
         geo_lat,
         geo_lng
@@ -257,6 +262,7 @@ export default {
             contactType:'',
             maxWords: 100,
             showMore: false,
+            mapLoader: null,
 
             sections: {
                 features:{
@@ -416,12 +422,6 @@ export default {
                     "https://witei-media.s3.amazonaws.com/pics/3941900-dedf2440.jpg"
                 ],
                 description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, quis pariatur labore laudantium ducimus necessitatibus..."
-            },
-            data: {
-                habs: 3,
-                bathrooms: 2,
-                m2: 150,
-                picture: "https://picsum.photos/200/300",
             }
         }
     },
@@ -490,7 +490,9 @@ export default {
                     lat: parseFloat(this.$page.unit.location.geo_lat),
                     lng: parseFloat(this.$page.unit.location.geo_lng)
                 },
-                zoom: 15
+                zoom: 15,
+                disableDefaultUI: true, 
+                zoomControl: true
             });
 
             // Define circle options
@@ -526,18 +528,25 @@ export default {
     },
 
     mounted() {
-        const loader = new Loader({
+
+        console.log(this.$page.unit )
+
+        this.mapLoader = new Loader({
             apiKey: process.env.GRIDSOME_MAPS_API_KEY,
-            version: 'weekly'
+            version: 'weekly',
+            mapId: 'DEMO_MAP_ID',
+            libraries: ['maps', 'marker']
         });
 
-        loader.load().then(() => {
+        this.mapLoader.load().then(() => {
             this.initMap();
         });
 
         this.updateDimensions();
         window.addEventListener('resize', this.updateDimensions);
     },
+
+
 
     beforeDestroy() {
         window.removeEventListener('resize', this.updateDimensions);
@@ -772,7 +781,7 @@ export default {
     #same-neighborhood,
     #pictures-grid {
         width: 100vw;
-        padding: 0 1.5rem;
+        padding: 0 15px;
         border-bottom: none;
         margin-bottom: 10px;
     }

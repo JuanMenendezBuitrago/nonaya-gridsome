@@ -20,14 +20,14 @@ export default new Vuex.Store({
     contractText:     '',
     rentText:         '',
     kindText:         '',
+    mapVisible:       false,
 
-    filter_rentType:     '',
     filter_maxPrice:     '',
     filter_minPrice:     '',
     filter_contract:     '',
     filter_kind:         '',
-    filter_bedrooms:     0,
-    filter_bathrooms:    0,
+    filter_bedrooms:     '',
+    filter_bathrooms:    '',
     filter_city:         '',
     filter_neighborhood: '',
     filter_apartment_all:    false,
@@ -41,9 +41,7 @@ export default new Vuex.Store({
     filter_new:              false,    
     'filter_second-hand':    false,        
 
-    sort_text:           '',
-    sort_direction:      '',
-    sort_by:             '',
+ 
   },
 
 
@@ -55,6 +53,10 @@ export default new Vuex.Store({
 
     setRentType(state, payload){
         state.filter_rentType = payload;
+    },
+
+    setMapVisible(state, payload){
+        state.mapVisible = payload;
     },
 
 
@@ -96,18 +98,6 @@ export default new Vuex.Store({
 
     setNeighborhood(state, payload){
         state.filter_neighborhood = payload;
-    },
-
-    setSortText(state, payload){
-        state.sort_text = payload;
-    },
-    
-    setSortByWay(state, payload){
-        state.sort_direction = payload;
-    },
-    
-    setSortBy(state, payload){
-        state.sort_by = payload;
     },
 
     setTouchDelta(state, payload){
@@ -183,6 +173,10 @@ export default new Vuex.Store({
 
     apartmentAtic(state, getters){
         return state.filter_apartment_atic;
+    },
+
+    mapVisible(state, getters){
+        return state.mapVisible;
     },
 
     apartmentFirst(state, getters){
@@ -264,19 +258,6 @@ export default new Vuex.Store({
     neighborhood(state, getters){
         return state.filter_neighborhood;
     } , 
-    
-    
-    sortText(state, getters){
-        return state.sort_text;
-    } ,
-
-    sortBy(state, getters){
-        return state.sort_by;
-    } ,
-
-    sortByWay(state, getters){
-        return state.sort_direction;
-    } ,
     
     showMaxPrice(state, getters){
         return state.showMaxPrice;

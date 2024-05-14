@@ -1,5 +1,5 @@
 <template>
-    <BaseModal :activator="activator" >
+    <BaseModal :activator="activator" :centered="$isMobile()">
         <template v-slot:header>
             <h1>Precio</h1>
         </template>        
@@ -11,22 +11,25 @@
                     :text="minPriceText" 
                     icon="down" 
                     ref="price-min"
-                    @clicked="togglePriceModal('price-min')">
-                    <ListPricesModal 
-                        activator="price-min" 
-                        :show="showMinPrice"
-                        zero
-                        @selected="closeMin"/>
+                    @clicked="toggleModal('price-min')">
+                    <Dropdown 
+                        activator = "price-min" 
+                        :show="active == 'price-min'"
+                        :list = "pricesMin"
+                        :selected = "minPrice"
+                        @selected = "setMin"/>
                 </ButtonWithIcon>
                 <ButtonWithIcon 
                     :text="maxPriceText" 
                     icon="down"
                     ref="price-max"
-                    @clicked="togglePriceModal('price-max')">
-                    <ListPricesModal 
-                        activator="price-max" 
-                        :show="showMaxPrice"
-                        @selected="closeMax"/>
+                    @clicked="toggleModal('price-max')">
+                    <Dropdown 
+                        activator = "price-max" 
+                        :show="active == 'price-max'"
+                        :list = "pricesMax"
+                        :selected = "maxPrice"
+                        @selected = "setMax"/>
                 </ButtonWithIcon>
             </div>
         </template>
@@ -38,7 +41,7 @@
 
 <script>
 import BaseModal       from './BaseModal.vue';
-import ListPricesModal from './ListPricesModal.vue';
+import Dropdown        from './Dropdown.vue';
 import Button          from '../Button.vue';
 import ButtonWithIcon  from '../ButtonWithIcon.vue';
 
@@ -49,8 +52,9 @@ export default {
         BaseModal,
         Button,
         ButtonWithIcon,
-        ListPricesModal
+        Dropdown
     },
+
     props: {
         activator: {
             type: String,
@@ -59,17 +63,7 @@ export default {
     },
     data(){
         return {
-            showMinPrice: false,
-            showMaxPrice: false,
-            kinds: [{
-                text: 'Casa'
-            },
-            {
-                text: 'Piso'
-            },
-            {
-                text: 'Duplex'
-            }]
+            active: '',
         }
     },
     computed:{
@@ -87,27 +81,87 @@ export default {
             if(this.maxPrice < 0)   return 'Sin Límite' 
             
             return this.$formatCurrency(this.maxPrice)
+        },
+
+        pricesMin(){
+            let result = [0, ...this.prices];
+
+            if (this.maxPrice > 0) {
+                result = result.filter(price => price < this.maxPrice)
+            }
+
+            result = result.map(price => {
+                return {
+                    value: price,
+                    text: this.$formatCurrency(price)
+                }
+            })
+
+            return [...result]
+        },
+
+        pricesMax(){
+            let result = [...this.prices, 'Sin límite'];
+
+            if (this.minPrice > 0) {
+                result = result.filter(price => price > this.minPrice || price == 'Sin límite')
+            }
+
+            result = result.map(price => {
+                if(isNaN(price))
+                    return {
+                        value: -1,
+                        text: 'Sin límite'
+                    }
+
+                return {
+                    value: price,
+                    text: this.$formatCurrency(price)
+                }
+            })
+
+            return [...result]
+        },
+
+        prices() {
+            let result1 = Array(19).fill().map((item, i) => {
+                return (i + 2) * 50
+            });
+
+            let result2 = Array(10).fill().map((item, i) => i * 100 + 1100);
+            let result3 = [2100, 2400, 2700, 3000];
+
+            return [...result1, ...result2, ...result3]
         }
     },
     methods: {
         ...mapMutations(['setMaxPrice', 'setMinPrice']),
 
-        togglePriceModal(name) {
-            if('price-min' == name) {
-                this.showMinPrice = !this.showMinPrice
-            }
-            if('price-max' == name) {
-                this.showMaxPrice = !this.showMaxPrice;
-            }
+
+        toggleModal(name) {
+            if (this.active == '' || this.active != name){
+                this.active = name;
+                return;
+            } 
+            
+            if (this.active == name)
+                this.active = '';
         },
 
-        closeMin(){
-            this.showMinPrice = false;
+        setMin(value){
+            this.setMinPrice(value)
+            this.close()
         },
 
-        closeMax(){
-            this.showMaxPrice = false;
-        }
+        setMax(value){
+            this.setMaxPrice(value)
+            this.close()
+        },
+
+        close(){
+            this.active = '';
+        },
+
     }
 }
 </script>

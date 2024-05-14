@@ -7,39 +7,6 @@
 
         <template v-slot:body>
             <div class="filters-grid">
-                <div>
-                    <template v-if="contract == 'rent'">
-                        <h1>Tipo de alqiler</h1>
-                        <ButtonWithIcon 
-                            :text="rentText == '' ? 'Selecciona' : rentText" 
-                            icon="down" 
-                            ref="rent"
-                            @clicked="toggleModal('rent')">
-                            <RentModal 
-                                :show="active == 'rent'"
-                                :relative="true"
-                                activator="rent"
-                                @selected="close"/>
-                    </ButtonWithIcon>
-                    </template>
-                </div>
-
-                
-                <div>
-                    <h1>Tipo de inmueble</h1>
-                    <ButtonWithIcon 
-                        :text="kindText == '' ? 'Tipo de inmueble' : kindText"
-                        icon="down" 
-                        ref="kind"
-                        @clicked="toggleModal('kind')">
-                        <KindModal 
-                            :show="active == 'kind'"
-                            activator="kind"
-                            @selected="close"/>
-                    </ButtonWithIcon>
-                </div>
-
-                <hr class="full-width"/>
 
                 <h1 class="full-width">Tipo de construcción</h1>
                 <div class="checkbox"
@@ -53,30 +20,7 @@
 
                 <hr class="full-width"/>
 
-                <label >Mínimo</label>
-                <label >Máximo</label>
-                <ButtonWithIcon 
-                    :text="minPriceText" 
-                    icon="down" 
-                    ref="price-min"
-                    @clicked="toggleModal('price-min')">
-                    <ListPricesModal 
-                        activator="price-min" 
-                        :show="active == 'price-min'"
-                        zero
-                        @selected="close"/>
-                </ButtonWithIcon>
-                <ButtonWithIcon 
-                    :text="maxPriceText" 
-                    icon="down" 
-                    ref="price-max"
-                    @clicked="toggleModal('price-max')">
-                    <ListPricesModal 
-                        activator="price-max"
-                        :show="active == 'price-max'"
-                        @selected="close"/>
-                </ButtonWithIcon>
-                <hr class="full-width"/>
+            
                 <h1 class="full-width">Tipo de vivienda</h1>
                 <section>
                     <div class="checkbox"
@@ -135,7 +79,7 @@
 import BaseModal        from './BaseModal.vue';
 import Button           from '../Button.vue';
 import Checkbox         from '~/components/icons/Checkbox.vue';
-import ListPricesModal  from '~/components/modals/ListPricesModal.vue';
+import PricesDropdown   from '~/components/modals/PricesDropdown.vue';
 import KindModal        from '~/components/modals/KindModal.vue';
 import RentModal        from '~/components/modals/RentModal.vue';
 import ButtonWithIcon   from '~/components/ButtonWithIcon.vue';
@@ -148,7 +92,7 @@ export default {
         BaseModal,
         Button,
         Checkbox,
-        ListPricesModal,
+        PricesDropdown,
         ButtonWithIcon,
         RentModal,
         KindModal
@@ -194,7 +138,6 @@ export default {
                 return;
             } 
             
-            console.log(name, this.active)
             if (this.active == name)
                 this.active = '';
         },

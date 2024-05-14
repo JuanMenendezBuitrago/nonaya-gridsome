@@ -120,4 +120,17 @@ export default {
             }
         }
     }
+
+    @media (max-width:430px) {
+
+        #gallery-overlay{
+
+        img{
+            width: 80%;
+            height: auto;
+        }
+    }
+    }
+
+
 </style>

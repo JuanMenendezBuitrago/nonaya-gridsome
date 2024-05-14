@@ -1,13 +1,11 @@
 <template>
-    <div
-        :style="styles"
-        :class="{
-                ...getClasses,
-                modal: true, 
-                centered:centered, 
-                show: (show || isActive), 
-                'hide-overflow': hideOverflow 
-                }">
+    <div :style="styles" :class="{
+        ...getClasses,
+        modal: true,
+        centered: centered,
+        show: (show || isActive),
+        'hide-overflow': hideOverflow
+    }">
 
         <div v-if="$slots.header" class="modal-header borderless">
             <slot name="header"></slot>
@@ -35,7 +33,7 @@ export default {
             required: false
         },
 
-        classes:{
+        classes: {
             required: false,
         },
 
@@ -76,17 +74,19 @@ export default {
     watch: {
         isActive(newVal, oldVal) {
             this.scrollStart = this.scrolledPixels || 0;
-            if(newVal === true) {
+            if (newVal === true) {
                 this.setCoordinates();
             }
         },
+
         showMaxPrice(newVal, oldVal) {
-            if(this.activator == 'price-max' && newVal === true) {
+            if (this.activator == 'price-max' && newVal === true) {
                 this.setWidth();
             }
         },
+
         showMinPrice(newVal, oldVal) {
-            if(this.activator == 'price-min' && newVal === true) {
+            if (this.activator == 'price-min' && newVal === true) {
                 this.setWidth();
             }
         }
@@ -97,15 +97,15 @@ export default {
             'activeModal', 'scrolledPixels', 'touchDelta', 'showMaxPrice', 'showMinPrice'
         ]),
 
-        getClasses(){
-            if(this.classes)
+        getClasses() {
+            if (this.classes)
                 return this.classes;
         },
 
         isActive() {
             return this.activeModal == this.activator
         },
-        
+
         computedLeft() {
             return this.left - (this.scrolledPixels - this.scrollStart);
         },
@@ -113,14 +113,14 @@ export default {
         styles() {
             let styles = {};
 
-            if(this.width){
-                styles = { ...styles, 'min-width': this.width + 'px'};
+            if (this.width) {
+                styles = { ...styles, 'min-width': this.width + 'px' };
             }
-            if(this.top){
-                styles = { ...styles, top: this.top + 'px'};
+            if (this.top) {
+                styles = { ...styles, top: this.top + 'px' };
             }
-            if(this.left && !this.centered){
-                styles = {...styles, left: this.computedLeft + 'px' };
+            if (this.left && !this.centered) {
+                styles = { ...styles, left: this.computedLeft + 'px' };
             }
             return styles;
         },
@@ -130,13 +130,13 @@ export default {
 
             while (currentParent != null) {
                 if (currentParent.$refs && currentParent.$refs[this.activator]) {
-                    try{
-                        if(currentParent.$refs[this.activator].$el)
+                    try {
+                        if (currentParent.$refs[this.activator].$el)
                             return currentParent.$refs[this.activator].$el
-                        
+
                         return currentParent.$refs[this.activator]
-                        
-                    }catch(e){
+
+                    } catch (e) {
                         console.log(currentParent.$refs)
                     }
                     return;
@@ -150,14 +150,16 @@ export default {
         ...mapMutations(['setScrolledPixels']),
 
         setCoordinates() {
-            if(this.relative) return;
+            if (this.relative === true) return;
 
             let activator = this.findActivator
-            this.top  = activator.getBoundingClientRect().bottom + window.scrollY;
+            this.top = activator.getBoundingClientRect().bottom + window.scrollY;
             this.left = activator.getBoundingClientRect().left;
         },
 
         setWidth() {
+            if (this.relative === true) return;
+
             let activator = this.findActivator
             this.width = activator.getBoundingClientRect().width;
         },
@@ -178,15 +180,15 @@ export default {
     pointer-events: all;
 
     min-width: 100px;
-    width:     max-content;
+    width: max-content;
 
-    flex-direction:  column;
+    flex-direction: column;
     justify-content: flex-start;
-    align-items:     stretch;
+    align-items: stretch;
 
-    position:         absolute;
+    position: absolute;
     background-color: white;
-    border-radius:    5px;
+    border-radius: 5px;
 
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 

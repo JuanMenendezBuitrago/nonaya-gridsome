@@ -1,28 +1,27 @@
 <template>
-    <BaseModal 
-        :activator="activator" 
-        :show="show" 
-        :hideOverflow="true">
+    <BaseModal :activator="activator" :centered="$isMobile()" :show="show" :hideOverflow="true">
 
         <template v-slot:body>
-            <div 
-                v-for="contractData, i in contractTypes" :key="`type_${i}`" 
-                class="modal-list-item"
-                @click.stop="selectContract(contractData.key)">{{ contractData.text }}</div>
+            <div v-for="contractData, i in contractTypes" :key="`type_${i}`" class="modal-list-item"
+                @click.stop="selectContract(contractData.value)">{{ contractData.text }}
+                <Check :checked="isSelected(contractData.value)" />
+            </div>
         </template>
 
     </BaseModal>
 </template>
 
 <script>
-import BaseModal        from './BaseModal.vue';
-import { mapMutations } from 'vuex';
+import BaseModal from './BaseModal.vue';
+import Check from '../icons/Check.vue';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
     name: 'ContractModal',
 
     components: {
-        BaseModal
+        BaseModal,
+        Check
     },
 
     props: {
@@ -31,36 +30,51 @@ export default {
             required: false,
             default: false,
         },
-        
+
         activator: {
             type: String,
             required: false
         }
     },
-    
-    data(){
+
+    data() {
         return {
-            value:'',
+            value: '',
             contractTypes: [{
                 text: 'Venta',
-                key: 'sell'            
+                value: 'sell'
             },
             {
                 text: 'Alquiler',
-                key: 'rent'            
+                value: 'rent'
             }]
         }
     },
+    computed: {
+        ...mapGetters(['contract'])
+    },
+
     methods: {
         ...mapMutations(['setContract', 'setContractText']),
 
+        isSelected(value) {
+            return value == this.contract;
+        },
+
         selectContract(value) {
-            let text = this.contractTypes.find(item => {
-                return item.key == value;
+            if(this.contract == value){
+                this.setContract('')
+                this.setContractText('')
+                this.$emit('selectedValue');
+                return;
+            }
+
+            let contract = this.contractTypes.find(item => {
+                return item.value == value;
             });
-            this.setContract(value);
-            this.setContractText(text.text);
-            this.$emit('selectedValue')
+            this.setContract(contract.value);
+            this.setContractText(contract.text);
+            this.$emit('selectedValue');
         }
     }
 }
@@ -69,15 +83,31 @@ export default {
 <style lang="scss">
 @import '~/assets/variables.scss';
 
-.modal-list-item{
-    padding: calc(5px + 0.3rem) calc(10px + 0.8rem);
+.modal-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 0.8rem;
+    padding: calc(5px + 0.3rem) calc((10px + 0.8rem) / 2) calc(5px + 0.3rem) calc(10px + 0.8rem);
     cursor: pointer;
 
-    &:hover{
-        background-color: $orange;
-        color: white;
+    svg {
+        visibility: hidden;
+        height: 1.5rem;
+        width: auto;
+
+        &.checked {
+            visibility: visible;
+        }
+    }
+
+    &:hover {
+        background-color: white !important;
+        color: inherit !important;
+
+        svg {
+            visibility: visible;
+        }
     }
 }
-
 </style>

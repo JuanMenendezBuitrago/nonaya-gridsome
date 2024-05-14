@@ -43,9 +43,9 @@
         </div>
 
         <div class="data">
-            <h1 class="price">{{ $formatCurrency(cardData.cost) }}</h1>
+            <h1 v-if="!rented" class="price">{{ $formatCurrency(cardData.cost) }}</h1>
             <div class="location">
-                <Location/> Piso en {{ cardData.street }}<br v-if="size=='sm'">, {{ cardData.town }}
+                <Location/> Piso en {{ cardData.neighborhood }}, {{ cardData.town }}
             </div>
             <div v-if="size=='sm'" class="features">
                 <span>{{ cardData.habs }} habs.</span>
@@ -190,7 +190,6 @@ export default {
         handleCarrousel() {            
             this.frameHeight = this.$refs.frame.clientHeight;
             this.frameWidth  = this.$refs.frame.clientWidth;
-            console.log('mounted')
 
         },
 
@@ -223,7 +222,7 @@ export default {
         },
 
         moreInfo(){
-            this.$router.push(`/${this.cardData.slug}`)
+            if(!this.rented) this.$router.push(`/${this.cardData.slug}`)
         }
     },
 

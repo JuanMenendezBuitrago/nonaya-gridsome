@@ -1,5 +1,5 @@
 <template>
-    <BaseModal :activator="activator" >
+    <BaseModal :activator="activator" :centered="$isMobile()">
 
         <template v-slot:header>
             <h1>Baños</h1>

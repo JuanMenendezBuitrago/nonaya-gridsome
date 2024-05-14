@@ -27,12 +27,14 @@
             <div class="content">
                 <div class="left-content">
                     <div class="breadcrumb">
-                        
+
                         <template v-if="searchType == 'city' || searchType == 'district'">
-                            {{ location }} <ChevronRight /> Todos los barrios
+                            {{ location }}
+                            <ChevronRight /> Todos los barrios
                         </template>
                         <template v-else>
-                            {{ location.split(',')[1] }} <ChevronRight /> {{ location.split(',')[0] }}
+                            {{ location.split(',')[1] }}
+                            <ChevronRight /> {{ location.split(',')[0] }}
                         </template>
                     </div>
                     <h1>{{ location }}</h1>
@@ -67,74 +69,52 @@
         </div>
 
         <!-- menu 2 -->
-        <div id="filters-1">
-            <SearchBox v-if="isMobile"
-                id="search-box-1"
-                @focussed="showModal('search')" 
-                @blured="hideModal()" 
-                ref="search"
-                reference="search"/>
-                <div class="icon">
-                    <Map/>
-                    <span>Mapa</span>
-                </div>
-        </div>
+        <template v-if="filters">
 
-        <div v-if="filters" id="filters-2-wrapper" ref="filters-wrapper">
-            <div id="filters-2" ref="filters">
-                <ButtonWithIcon 
-                icon="down" 
-                :text="this.contractText == '' ? 'Contrato' : this.contractText"
-                :selected="this.contractText == '' ? false : true" 
-                reference="contract" 
-                ref="contract" 
-                @clicked="toggleModal('contract')"/>
-                
-                <SearchBox v-if="!isMobile"
-                id="search-box-2"
-                @focussed="showModal('search')" 
-                @blured="hideModal()" 
-                ref="search"
-                reference="search"/>
-    
-                <ButtonWithIcon 
-                icon="down" 
-                :text="this.kindText == '' ? 'Tipo de inmueble' : this.kindText"
-                :selected="this.kindText == '' ? false : true" 
-                ref="kind" 
-                reference="kind" 
-                @clicked="toggleModal('kind')"/>
-                
-                <ButtonWithIcon 
-                icon="down" 
-                text="Precio" 
-                ref="price" 
-                reference="price" 
-                @clicked="toggleModal('price')"/>
-            
-                <ButtonWithIcon 
-                icon="down" 
-                text="Habitaciones" 
-                ref="bedrooms" 
-                reference="bedrooms" 
-                @clicked="toggleModal('bedrooms')"/>
-                
-                <ButtonWithIcon 
-                icon="down" 
-                text="Baños" 
-                ref="bathrooms" 
-                reference="bathrooms" 
-                @clicked="toggleModal('bathrooms')"/>
-                
-                <ButtonWithIcon 
-                icon="filter" 
-                text="Más filtros" 
-                ref="search-filters"
-                reference="search-filters"
-                :count="filterCount" 
-                @clicked="toggleModal('search-filters')"/>
+            <div id="filters-1">
+                <SearchBox v-if="$isMobile()" id="search-box-1" @focussed="showModal('search')" @blured="hideModal()"
+                    ref="search" reference="search" />
+                <div class="icon">
+                    <Map />
+                    <span @click="toggleMap">Mapa</span>
+                </div>
             </div>
-        </div>
+
+            <div id="filters-2-wrapper" ref="filters-wrapper">
+                <div id="filters-2" ref="filters">
+                    <ButtonWithIcon icon="down" :text="this.contractText == '' ? 'Contrato' : this.contractText"
+                        :selected="this.contractText == '' ? false : true" reference="contract" ref="contract"
+                        @clicked="toggleModal('contract')" />
+
+                    <ButtonWithIcon v-show="contract == 'rent'" icon="down" :text="this.rentText == '' ? 'Tipo de alquiler' : this.rentText"
+                        :selected="this.rentText == '' ? false : true" reference="rentType" ref="rentType"
+                        @clicked="toggleModal('rentType')" />
+
+                    <SearchBox v-if="!$isMobile()" id="search-box-2" @focussed="showModal('search')" @blured="hideModal()"
+                        ref="search" reference="search" />
+
+                    <ButtonWithIcon icon="down" :text="this.kindText == '' ? 'Tipo de inmueble' : this.kindText"
+                        :selected="this.kindText == '' ? false : true" ref="kind" reference="kind"
+                        @clicked="toggleModal('kind')" />
+
+                    <ButtonWithIcon icon="down" :text="this.priceText == '' ? 'Precio' : this.priceText" ref="price" reference="price"
+                        :selected="this.maxPrice != '' || this.minPrice != '' ? true : false"
+                        @clicked="toggleModal('price')" />
+
+                    <ButtonWithIcon icon="down" :text="this.roomsText == '' ? 'Habitaciones' : this.roomsText" ref="bedrooms" reference="bedrooms"
+                        :selected="this.bedrooms > 0 ? true : false"
+                        @clicked="toggleModal('bedrooms')" />
+
+                    <ButtonWithIcon icon="down" :text="this.bathroomsText == '' ? 'Baños' : this.bathroomsText" ref="bathrooms" reference="bathrooms"
+                        :selected="this.bathrooms > 0 ? true : false"
+                        @clicked="toggleModal('bathrooms')" />
+
+                    <ButtonWithIcon icon="filter" text="Más filtros" ref="search-filters" reference="search-filters"
+                        :selected="filterCount > 0 ? true : false"
+                        :count="filterCount" @clicked="toggleModal('search-filters')" />
+                </div>
+            </div>
+        </template>
 
         <div v-else id="navigation-2">
             <div class="left">
@@ -146,34 +126,37 @@
             </div>
         </div>
 
-        <div id="modals">
-                <ContractModal activator="contract"    @selectedValue="changeContractText" />
-                <SearchResultsModal activator="search" @selectedValue="changeLocationText"/>
-                <KindModal activator="kind"            @selectedValue="changeKindText" />
-                <PriceModal activator="price" />
-                <BedroomsModal activator="bedrooms" />
-                <BathroomsModal activator="bathrooms" />
-                <FiltersModal activator="search-filters" />
+        <div v-if="filters" id="modals">
+            
+            <SearchResultsModal activator="search" @selectedValue="changeLocationText" />
+            <ContractModal activator="contract" @selectedValue="changeContractText" />
+            <RentTypeModal activator="rentType" @selectedValue="changeRentTypeText" />
+            <KindModal activator="kind" @selectedValue="changeKindText" />
+            <PriceModal activator="price" />
+            <BedroomsModal activator="bedrooms" />
+            <BathroomsModal activator="bathrooms" />
+            <FiltersModal activator="search-filters" />
         </div>
     </div>
 </template>
 
 <script>
-import ChevronDown        from '~/components/icons/ChevronDown.vue';
-import ChevronRight       from '~/components/icons/ChevronRight.vue';
-import Search             from '~/components/icons/Search.vue';
-import Price              from '~/components/icons/Price.vue';
-import Map                from '~/components/icons/Map.vue';
-import SearchBox          from '~/components/SearchBox.vue';
-import RentuosLogo        from '~/components/RentuosLogo.vue';
-import ContractModal      from '~/components/modals/ContractModal.vue';
+import ChevronDown from '~/components/icons/ChevronDown.vue';
+import ChevronRight from '~/components/icons/ChevronRight.vue';
+import Search from '~/components/icons/Search.vue';
+import Price from '~/components/icons/Price.vue';
+import Map from '~/components/icons/Map.vue';
+import SearchBox from '~/components/SearchBox.vue';
+import RentuosLogo from '~/components/RentuosLogo.vue';
+import ContractModal from '~/components/modals/ContractModal.vue';
+import RentTypeModal from '~/components/modals/RentTypeModal.vue';
 import SearchResultsModal from '~/components/modals/SearchResultsModal.vue';
-import KindModal          from '~/components/modals/KindModal.vue';
-import BathroomsModal     from '~/components/modals/BathroomsModal.vue';
-import BedroomsModal      from '~/components/modals/BedroomsModal.vue';
-import FiltersModal       from '~/components/modals/FiltersModal.vue';
-import PriceModal         from '~/components/modals/PriceModal.vue';
-import ButtonWithIcon     from '~/components/ButtonWithIcon.vue';
+import KindModal from '~/components/modals/KindModal.vue';
+import BathroomsModal from '~/components/modals/BathroomsModal.vue';
+import BedroomsModal from '~/components/modals/BedroomsModal.vue';
+import FiltersModal from '~/components/modals/FiltersModal.vue';
+import PriceModal from '~/components/modals/PriceModal.vue';
+import ButtonWithIcon from '~/components/ButtonWithIcon.vue';
 
 import { mapGetters, mapMutations } from 'vuex';
 
@@ -191,6 +174,7 @@ export default {
         Map,
         SearchResultsModal,
         ContractModal,
+        RentTypeModal,
         BathroomsModal,
         BedroomsModal,
         FiltersModal,
@@ -207,11 +191,6 @@ export default {
             type: Boolean,
             required: false,
             default: false
-        },
-        isMobile: {
-            type: Boolean,
-            required: false,
-            default: true
         },
         location: {
             type: String,
@@ -234,11 +213,50 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['activeModal', 'searchQuery', 'kindText', 'contractText'])
+        ...mapGetters(['activeModal', 'contract', 'searchQuery', 'kindText', 'contractText', 'rentText', 'minPrice', 'maxPrice', 'bedrooms', 'bathrooms', 'mapVisible']),
+
+        priceText() {
+            if ((this.minPrice === 0 || this.minPrice === '') && this.maxPrice > 0) {
+                return `Hasta ${this.$formatCurrency(this.maxPrice)}`                
+            }
+            if (this.minPrice !== '' && (this.maxPrice < 0 || this.maxPrice === '')) {
+                return `Desde ${this.$formatCurrency(this.minPrice)}`                
+            }            
+            if (this.minPrice && this.maxPrice) {
+                return `Entre ${this.$formatCurrency(this.minPrice)} y ${this.$formatCurrency(this.maxPrice)}`
+            }
+            return ''
+        },
+
+        roomsText() {
+            if (this.bedrooms === 0) {
+                return "Habitaciones"
+            }
+            if (this.bedrooms == 1) {
+                return `${this.bedrooms} habitación o más`                
+            }  
+            if (this.bedrooms > 1) {
+                return `${this.bedrooms} habitaciones o más`                
+            }  
+            return ''
+        },
+
+        bathroomsText() {
+            if (this.bathrooms === 0) {
+                return "Baños"
+            }
+            if (this.bathrooms == 1) {
+                return `${this.bathrooms} baño o más`                
+            }  
+            if (this.bathrooms > 1) {
+                return `${this.bathrooms} baños o más`                
+            }  
+            return ''
+        }
     },
 
     methods: {
-        ...mapMutations(['setActiveModal', 'setScrolledPixels']),
+        ...mapMutations(['setActiveModal', 'setScrolledPixels', 'setMapVisible']),
 
         showModal(name) {
             this.setActiveModal(name);
@@ -246,6 +264,11 @@ export default {
 
         hideModal() {
             this.setActiveModal('');
+
+        },
+
+        toggleMap() {
+            this.setMapVisible (!this.mapVisible);
         },
 
         toggleModal(name) {
@@ -265,12 +288,15 @@ export default {
             this.setActiveModal('');
         },
 
-        changeLocationText() {
-            
+        changeRentTypeText() {
             this.setActiveModal('');
         },
 
-        handleScrollX(event){
+        changeLocationText() {
+            this.setActiveModal('');
+        },
+
+        handleScrollX(event) {
             let triggeredElement = event.target;
             this.setScrolledPixels(triggeredElement.scrollLeft);
         }
@@ -278,7 +304,7 @@ export default {
 
     mounted() {
         const filtersWrapper = this.$refs['filters-wrapper'];
-        if(filtersWrapper){
+        if (filtersWrapper) {
             filtersWrapper.addEventListener('scroll', this.handleScrollX);
         }
 
@@ -286,7 +312,7 @@ export default {
 
     beforeDestroy() {
         const filtersWrapper = this.$refs['filters-wrapper'];
-        if(filtersWrapper){
+        if (filtersWrapper) {
             filtersWrapper.removeEventListener('scroll', this.handleScrollX);
         }
     }
@@ -297,7 +323,7 @@ export default {
 <style lang="scss">
 @import '~/assets/variables.scss';
 
-#modals{
+#modals {
     position: absolute;
     height: 200%;
     top: 0;
@@ -326,27 +352,47 @@ export default {
     display: none;
     border-bottom: none;
     padding-bottom: 0;
-    .icon{
+
+    .icon {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        span{
+
+        span {
             font-size: 0.6rem;
         }
     }
-    svg{
+
+    svg {
         width: 1.3rem;
         height: auto;
     }
-    #search-box-1{
+
+    #search-box-1 {
         flex: 1
     }
 }
+
 #filters-2-wrapper {
-    width: 100vw; 
+    width: 100vw;
     overflow-x: auto;
     border-bottom: 1px solid $gray-light;
+
+    &::-webkit-scrollbar {
+        height: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+        border-radius: 3px;
+        border: none;
+        background-color: $gray-light;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 6px;
+        background-color: $gray;
+    }
 }
 
 #filters-2 {
@@ -590,27 +636,29 @@ export default {
 
 /* For screens smaller than 430px  */
 @media (max-width: 430px) {
-    .app-list{
+    .app-list {
+
         #navigation,
         #search-box-2,
-        #hero{
+        #hero {
             display: none;
         }
-        #filters-1{ 
+
+        #filters-1 {
             display: flex;
         }
     }
 
-    .app-detail{
+    .app-detail {
+
         #navigation,
         #search-box-2,
         #hero,
-        #filters-1
-        #sear-box-1{ 
+        #filters-1 #sear-box-1 {
             display: none;
         }
 
-        #navigation-2{
+        #navigation-2 {
             padding-bottom: 0;
         }
     }

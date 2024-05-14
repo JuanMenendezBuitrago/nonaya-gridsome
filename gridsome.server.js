@@ -22,13 +22,13 @@ module.exports = function (api) {
       collection.addNode({
         id: item.id,
         slug,
-        status: item.raw_status,
+        status: item.raw_status, // reserved | available
         title: item.title,
         description: item.description,
-        contract,
+        contract, // rent | sell
         cost,
         tags: item.tags || [],
-        kind: item.kind,
+        kind: item.kind, // piso | ático | plaza de parking | estudio | dúplex | casa / chalet | terreno
         location: {
           town: item.town,
           neighborhood: item.neighborhood || '',
@@ -57,7 +57,7 @@ module.exports = function (api) {
 
     api.createPages(async ({ createPage, graphql }) => {
       const MIN_UNITS = 3
-      const { data } = await graphql(`
+      const { data: allData } = await graphql(`
       {
         allUnit {
           edges {
@@ -97,14 +97,17 @@ module.exports = function (api) {
           }
         }
       }
-    `);
+      `);
 
-      const cities = data.allUnit.edges.reduce((acc, curr, index) => {
+
+      const cities = allData.allUnit.edges.reduce((acc, curr, index) => {
+        // town
         if (!acc[`${curr.node.location.town}`]) 
           acc[`${curr.node.location.town}`] = [curr.node];
         else 
           acc[curr.node.location.town].push(curr.node)
 
+        // town_district
         if (curr.node.location.district) {
           if(!acc[`${curr.node.location.town}_${curr.node.location.district}`]) 
             acc[`${curr.node.location.town}_${curr.node.location.district}`]= [curr.node];
@@ -112,6 +115,7 @@ module.exports = function (api) {
             acc[`${curr.node.location.town}_${curr.node.location.district}`].push(curr.node)
         }
 
+        // town_district|#_neighborhood
         if (curr.node.location.neighborhood){
           if (!acc[`${curr.node.location.town}_${curr.node.location.district || '#'}_${curr.node.location.neighborhood}`]) 
             acc[`${curr.node.location.town}_${curr.node.location.district || '#'}_${curr.node.location.neighborhood}`] = [curr.node];
@@ -125,19 +129,41 @@ module.exports = function (api) {
 
 
       Object.keys(cities).forEach(c => {
-        [city, district, neighborhood] = c.split('_');
+        const [city, district, neighborhood] = c.split('_');
 
+        const features = ['',
+          // bedrooms
+          'estudio',      
+          'una-habitacion',     
+          'dos-habitaciones',     
+          'tres-habitaciones',      
+          'cuatro-habitaciones',      
+          'alquiler-por-meses',
+          'amueblado',
+          'sin-amueblar',
+          'con-ascensor',
+          'admite-mascotas',
+          'aire-acondicionado',
+          'con-garaje',
+          'con-piscina',
+          'atico',
+          'bajos'];
         // cities
-        city && createPage({
-          path: `/${slugify(city.toLowerCase())}`,
-          component: './src/templates/List.vue',
-          context: {
-            city,
-            units: cities[city],
-            hero: true,
-            searchType: 'city'
-          },
-        });
+        if (city) {
+          features.forEach(type => {
+              let sufix = (type == '') ? '' : '/' + type;
+              createPage({
+              path: `/${slugify(city.toLowerCase())}${sufix}`,
+              component: './src/templates/List.vue',
+              context: {
+                city,
+                units: cities[city],
+                hero: true,
+                searchType: 'city'
+              },
+            });
+          })
+        }
         // districts
         (district && district != '#') && createPage({
           path: `/${slugify(city.toLowerCase())}/${slugify(district.toLowerCase())}`,
@@ -162,7 +188,7 @@ module.exports = function (api) {
         });
       });
 
-      data.allUnit.edges.forEach(item => {
+      allData.allUnit.edges.forEach(item => {
         createPage({
           path: `/${item.node.slug}`,
           component: './src/templates/Detail.vue',
