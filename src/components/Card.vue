@@ -142,7 +142,7 @@ export default {
 
     computed: {
         bedrooms() {
-            let amount = this.cardData.habs;
+            let amount = this.cardData.bedrooms;
             let result = amount + ' hab' + (amount > 1 ? 's.' : '.');
             return (result);
         },
@@ -154,7 +154,7 @@ export default {
         },
 
         area() {
-            let amount = this.cardData.m2;
+            let amount = this.cardData.area;
             let result = `${amount}m<sup>2</sup>`;
             return (result);
         },

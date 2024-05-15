@@ -30,18 +30,7 @@
                     </ButtonWithIcon>
                 </div>
                 <Card v-for="(unit, index) in units" :key="`unit_${index}`" size="md" :index="index" :isMobile=isMobile
-                    :cardData="{
-                        floor: unit.floor,
-                        habs: unit.bedrooms,
-                        bathrooms: unit.bathrooms,
-                        slug: unit.slug,
-                        m2: unit.area,
-                        cost: unit.cost,
-                        street: unit.location.street,
-                        town: unit.location.town,
-                        description: unit.description,
-                        pictures: unit.pictures
-                    }" 
+                    :cardData="unit" 
                     contact 
                     @clicked-contact="showContactModal = true"></Card>
             </div>

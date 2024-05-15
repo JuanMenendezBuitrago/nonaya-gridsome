@@ -207,7 +207,7 @@ export default {
 
     data() {
         return {
-            filterCount: 1,
+            filterCount: 0,
             touchDelta: 0,
         }
     },
