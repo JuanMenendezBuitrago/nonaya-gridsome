@@ -2,22 +2,22 @@
     <div class="app-detail">
         <Menu :isMobile="isMobile" />
 
-        <Media v-if="isMobile" :single="true" :pictures="$page.unit.pictures" @clickedPicture="showPicture" />
+        <Media v-if="isMobile" :single="true" :pictures="$context.pictures" @clickedPicture="showPicture" />
 
-        <Media :single="false" :pictures="$page.unit.pictures" @clickedPicture="showPicture" />
+        <Media :single="false" :pictures="$context.pictures" @clickedPicture="showPicture" />
 
         <div id="unit-container">
             <div id="main">
                 <div id="unit-header">
                     <div class="first-line">
                         <div>
-                            <span class="cost">{{ $formatCurrency($page.unit.cost) }}</span><span v-if="$page.unit.contract == 'rent'"
+                            <span class="cost">{{ $formatCurrency($context.cost) }}</span><span v-if="$context.contract == 'rent'"
                                 class="mes">/mes</span>
                         </div>
                         <div class="code">
                             <Tag />
-                            <span style="margin-right:15px;">Ref: {{ $page.unit.id }}</span>
-                            <Pill :content="$page.unit.status" />
+                            <span style="margin-right:15px;">Ref: {{ $context.id }}</span>
+                            <Pill :content="$context.status" />
                         </div>
                     </div>
                     <div class="features">
@@ -29,10 +29,10 @@
                 </div>
                 <div id="unit-content">
                     <h1 class="title">
-                        {{ $page.unit.title }}
+                        {{ $context.title }}
                     </h1>
                     <h3 class="town">
-                        {{ $page.unit.location.town }}
+                        {{ $context.location.town }}
                     </h3>
 
                     <div v-if="isMobile" id="unit-location">
@@ -52,14 +52,14 @@
 
                 <div id="unit-features">
                     <h1 class="title">Caracterísiticas</h1>
-                    <Feature icon="kind" line1="Tipo de inmueble" :line2="$page.unit.kind" />
+                    <Feature icon="kind" line1="Tipo de inmueble" :line2="$context.kind" />
                     <Feature icon="condition" line1="Estado" line2="Buen estado" />
                     <Feature icon="heating" line1="Calefacción" line2="Bomba de calor" />
                     <Feature icon="elevator" line1="Ascensor" line2="Sí" />
                     <Feature icon="furnished" line1="Amueblado" line2="Sí" />
                     <Feature icon="ac" line1="Aire acondicionado" line2="No" />
-                    <Feature v-if="$page.unit.energy.consumption" icon="energy" line1="Consumo de energía"
-                        :line2="$page.unit.energy.consumption + 'Mw h m<sup>2</sup>/año'" />
+                    <Feature v-if="$context.energy.consumption" icon="energy" line1="Consumo de energía"
+                        :line2="$context.energy.consumption + 'Mw h m<sup>2</sup>/año'" />
 
                     <div id="pills">
                         <Pill content="Armarios" />
@@ -97,7 +97,7 @@
 
         <div id="same-neighborhood">
             <div class="same-neighborhood-header">
-                <h1 class="title">Otros inmuebles en {{ $page.unit.location.neighborhood }}</h1>
+                <h1 class="title">Otros inmuebles en {{ $context.location.neighborhood }}</h1>
                 <div class="buttons">
                     <RoundButton icon="left" />
                     <RoundButton icon="right" />
@@ -105,17 +105,18 @@
             </div>
             <div class="cards-overflow">
                 <div class="cards">
-                    <Card :index="0" size="sm" :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}"></Card>
-                    <Card :index="1" size="sm" :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}"></Card>
-                    <Card :index="2" size="sm" :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}"></Card>
-                    <Card :index="3" size="sm" :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}"></Card>
+                    <Card v-for="unit, i in this.sameNeighborhood"
+                        :key="`same_${i}`" 
+                        :index="i" 
+                        :cardData="unit"
+                        size="sm" />
                 </div>
             </div>
         </div>
 
-        <div id="history">
+        <div v-if="this.sameNeighborhoodRented.length > 0" id="history">
             <div class="history-header">
-                <h1 class="title">Viviendas alquiladas recientemente en {{ $page.unit.location.neighborhood }} [Si no hubiera resultados]
+                <h1 class="title">Viviendas alquiladas recientemente en {{ $context.location.neighborhood }} [Si no hubiera resultasdos]
                     <div class="history-subheader">
                         En este momento, no disponemos de más viviendas que coincidan con tus preferencias.<br>
                         Sin embargo, te mostramos algunas opciones que han sido alquiladas recientemente.
@@ -129,35 +130,18 @@
 
             <div class="cards-overflow">
                 <div class="cards">
-                    <Card 
-                        :index="0"
-                        size="sm" 
-                        :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}" 
+                    <Card v-for="unit, i in this.sameNeighborhoodRented"
+                        :key="`same_${i}`" 
+                        :index="i" 
+                        :cardData="unit"
                         rented 
-                        grayscale></Card>
-                    <Card 
-                        :index="1"
-                        size="sm" 
-                        :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}" 
-                        rented 
-                        grayscale></Card>
-                    <Card 
-                        :index="2"
-                        size="sm" 
-                        :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}" 
-                        rented 
-                        grayscale></Card>
-                    <Card 
-                        :index="3"
-                        size="sm" 
-                        :cardData="{...cardData, town: $page.unit.location.town, neighborhood: $page.unit.location.neighborhood, cost: $page.unit.cost}" 
-                        rented 
-                        grayscale></Card>
+                        size="sm" />
+                    
                 </div>
             </div>
         </div>
 
-        <Footer :unit="$page.unit" />
+        <Footer :unit="$context" />
 
         <div v-if="isMobile" id="contact">
             <Button 
@@ -170,7 +154,7 @@
 
         <Gallery 
             v-if="showGallery" 
-            :pictures="$page.unit.pictures" 
+            :pictures="$context.pictures" 
             :indexStart="galleryIndexStart"
             @closeMe="closeGallery" />
 
@@ -183,35 +167,6 @@
     </div>
 </template>
 
-<page-query>
-
-query Unit($id: ID!) {
-  unit: unit(id: $id){
-    id,
-    title,
-    kind,
-    status,
-    contract,
-    cost,
-    bedrooms,
-    bathrooms,
-    area,
-    floor,
-    pictures,
-    location{
-        neighborhood,
-        town,
-        geo_lat,
-        geo_lng
-    },
-    energy{
-        certificate_display,
-        consumption
-    }
-    description
-  }
-}
-</page-query>
 
 
 <script>
@@ -431,7 +386,7 @@ export default {
         },
 
         cutDescription() {
-            let text = this.$page.unit.description.replace(/\n/g, '<br>');
+            let text = this.$context.description.replace(/\n/g, '<br>');
             let words = text.split(' ');
 
             if (words.length <= this.maxWords) {
@@ -449,33 +404,48 @@ export default {
         },
 
         bedrooms() {
-            let amount = this.$page.unit.bedrooms;
+            let amount = this.$context.bedrooms;
             let result = amount + ' hab' + (amount > 1 ? 's.' : '.');
             return (result);
         },
 
         bathrooms() {
-            let amount = this.$page.unit.bathrooms;
+            let amount = this.$context.bathrooms;
             let result = amount + ' baño' + (amount > 1 ? 's' : '');
             return (result);
         },
 
         area() {
-            let amount = this.$page.unit.area;
+            let amount = this.$context.area;
             let result = `${amount}m<sup>2</sup>`;
             return (result);
         },
 
         floor() {
-            let amount = this.$page.unit.floor;
+            let amount = this.$context.floor;
             let sup = (amount == 1 || amount == 3) ? 'er' : 'o';
             let result = amount + `<sup>${sup}</sup> piso`;
             return (result);
         },
 
         tipoContrato() {
-            return this.$page.unit.contract == 'rent' ? 'l alquiler' : 'la venta';
+            return this.$context.contract == 'rent' ? 'l alquiler' : 'la venta';
+        },
+
+
+        sameNeighborhood() {
+            return this.$context.allUnits.filter(unit => {
+                return unit.location.neighborhood == this.$context.location.neighborhood && unit.location.town == this.$context.location.town
+            }).slice(0,4)
+        },
+
+        sameNeighborhoodRented() {
+            return this.$context.allUnits.filter(unit => {
+                return unit.location.neighborhood == this.$context.location.neighborhood && unit.location.town == this.$context.location.town && !unit.isActive && unit.renting 
+            }).slice(0,4)
         }
+        
+
 
     },
 
@@ -487,8 +457,8 @@ export default {
         initMap() {
             this.map = new google.maps.Map(this.$refs.mapContainer, {
                 center: {
-                    lat: parseFloat(this.$page.unit.location.geo_lat),
-                    lng: parseFloat(this.$page.unit.location.geo_lng)
+                    lat: parseFloat(this.$context.location.geo_lat),
+                    lng: parseFloat(this.$context.location.geo_lng)
                 },
                 zoom: 15,
                 disableDefaultUI: true, 
@@ -502,8 +472,8 @@ export default {
                 fillOpacity: 0.25,
                 map: this.map,
                 center: {
-                    lat: parseFloat(this.$page.unit.location.geo_lat),
-                    lng: parseFloat(this.$page.unit.location.geo_lng)
+                    lat: parseFloat(this.$context.location.geo_lat),
+                    lng: parseFloat(this.$context.location.geo_lng)
                 },
                 radius: 500 // Example radius in meters
             };
@@ -529,7 +499,7 @@ export default {
 
     mounted() {
 
-        console.log(this.$page.unit )
+        console.log(this.$context )
 
         this.mapLoader = new Loader({
             apiKey: process.env.GRIDSOME_MAPS_API_KEY,

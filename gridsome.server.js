@@ -12,7 +12,7 @@ module.exports = function (api) {
 
   api.loadSource(({ addCollection }) => {
     // Use the Data Store API here: https://gridsome.org/docs/data-store-api/
-    const collection = addCollection('Unit')
+    const collection = addCollection('Units')
 
     for (const item of jsonData) {
       let cost = item.renting ? item.renting_cost : (item.selling ? item.selling_cost : 'consultar');
@@ -57,9 +57,9 @@ module.exports = function (api) {
 
     api.createPages(async ({ createPage, graphql }) => {
       const MIN_UNITS = 3
-      const { data: allData } = await graphql(`
+      const { data } = await graphql(`
       {
-        allUnit {
+        allUnits {
           edges {
             node {
               id,
@@ -99,101 +99,120 @@ module.exports = function (api) {
       }
       `);
 
+      const allUnits = data.allUnits.edges.map(edge => edge.node)
 
-      const cities = allData.allUnit.edges.reduce((acc, curr, index) => {
-        // town
-        if (!acc[`${curr.node.location.town}`]) 
-          acc[`${curr.node.location.town}`] = [curr.node];
-        else 
-          acc[curr.node.location.town].push(curr.node)
+      const allLocationPaths = {}
+      allUnits.forEach(unit => {
+        let path = `/${slugify(unit.location.town)}`
+        if (!allLocationPaths[path])
+          allLocationPaths[path]=[unit]
+        else
+          allLocationPaths[path].push(unit)
 
-        // town_district
-        if (curr.node.location.district) {
-          if(!acc[`${curr.node.location.town}_${curr.node.location.district}`]) 
-            acc[`${curr.node.location.town}_${curr.node.location.district}`]= [curr.node];
+        if(unit.location.district){
+          path = `/${slugify(unit.location.town)}/${slugify(unit.location.district)}`
+          if (!allLocationPaths[path])
+            allLocationPaths[path]=[unit]
           else
-            acc[`${curr.node.location.town}_${curr.node.location.district}`].push(curr.node)
+            allLocationPaths[path].push(unit)
         }
 
-        // town_district|#_neighborhood
-        if (curr.node.location.neighborhood){
-          if (!acc[`${curr.node.location.town}_${curr.node.location.district || '#'}_${curr.node.location.neighborhood}`]) 
-            acc[`${curr.node.location.town}_${curr.node.location.district || '#'}_${curr.node.location.neighborhood}`] = [curr.node];
-          else 
-            acc[`${curr.node.location.town}_${curr.node.location.district || '#'}_${curr.node.location.neighborhood}`].push(curr.node);
+        if(unit.location.district && unit.location.neighborhood){
+          path = `/${slugify(unit.location.town)}/${slugify(unit.location.district)}/${slugify(unit.location.neighborhood)}`
+          if (!allLocationPaths[path])
+            allLocationPaths[path]=[unit]
+          else
+            allLocationPaths[path].push(unit)
+        }else if(unit.location.neighborhood){
+          path = `/${slugify(unit.location.town)}/${slugify(unit.location.neighborhood)}`
+          if (!allLocationPaths[path])
+            allLocationPaths[path]=[unit]
+          else
+            allLocationPaths[path].push(unit)
         }
-        
+      })
 
-        return acc
-      }, {});
-
-
-      Object.keys(cities).forEach(c => {
-        const [city, district, neighborhood] = c.split('_');
-
-        const features = ['',
-          // bedrooms
-          'estudio',      
-          'una-habitacion',     
-          'dos-habitaciones',     
-          'tres-habitaciones',      
-          'cuatro-habitaciones',      
-          'alquiler-por-meses',
-          'amueblado',
-          'sin-amueblar',
-          'con-ascensor',
-          'admite-mascotas',
-          'aire-acondicionado',
-          'con-garaje',
-          'con-piscina',
-          'atico',
-          'bajos'];
-        // cities
-        if (city) {
-          features.forEach(type => {
-              let sufix = (type == '') ? '' : '/' + type;
-              createPage({
-              path: `/${slugify(city.toLowerCase())}${sufix}`,
-              component: './src/templates/List.vue',
-              context: {
-                city,
-                units: cities[city],
-                hero: true,
-                searchType: 'city'
-              },
-            });
-          })
-        }
-        // districts
-        (district && district != '#') && createPage({
-          path: `/${slugify(city.toLowerCase())}/${slugify(district.toLowerCase())}`,
-          component: './src/templates/List.vue',
-          context: {
-            city,
-            units: cities[`${city}_${district}`],
-            hero: true,
-            searchType: 'district',
-          },
-        });
-        // neighborhoods
-        neighborhood && createPage({
-          path: `/${slugify(city.toLowerCase())}/${district == '#' ? '' : slugify(district.toLowerCase())+'/'}${slugify(neighborhood.toLowerCase())}`,
-          component: './src/templates/List.vue',
-          context: {
-            city,
-            units: cities[`${city}_${district == '#' ? '' : district + '_'}${neighborhood}`],
-            hero: true,
-            searchType: 'neighborhood',
-          },
-        });
-      });
-
-      allData.allUnit.edges.forEach(item => {
+      Object.keys(allLocationPaths).forEach(path => {
         createPage({
-          path: `/${item.node.slug}`,
+          path,
+          component: './src/templates/List.vue',
+          context: {
+            units: allLocationPaths[path],
+            allUnits,
+            hero: true
+          },
+        });
+
+      })
+
+      // Object.keys(cities).forEach(c => {
+      //   const [city, district, neighborhood] = c.split('_');
+
+      //   const features = ['',
+      //     // bedrooms
+      //     'estudio',      
+      //     'una-habitacion',     
+      //     'dos-habitaciones',     
+      //     'tres-habitaciones',      
+      //     'cuatro-habitaciones',      
+      //     'alquiler-por-meses',
+      //     'amueblado',
+      //     'sin-amueblar',
+      //     'con-ascensor',
+      //     'admite-mascotas',
+      //     'aire-acondicionado',
+      //     'con-garaje',
+      //     'con-piscina',
+      //     'atico',
+      //     'bajos'];
+      //   // cities
+      //   if (city) {
+      //     features.forEach(type => {
+      //         let sufix = (type == '') ? '' : '/' + type;
+      //         createPage({
+      //         path: `/${slugify(city.toLowerCase())}${sufix}`,
+      //         component: './src/templates/List.vue',
+      //         context: {
+      //           city,
+      //           units: cities[city],
+      //           hero: true,
+      //           searchType: 'city'
+      //         },
+      //       });
+      //     })
+      //   }
+      //   // districts
+      //   (district && district != '#') && createPage({
+      //     path: `/${slugify(city.toLowerCase())}/${slugify(district.toLowerCase())}`,
+      //     component: './src/templates/List.vue',
+      //     context: {
+      //       city,
+      //       units: cities[`${city}_${district}`],
+      //       hero: true,
+      //       searchType: 'district',
+      //     },
+      //   });
+      //   // neighborhoods
+      //   neighborhood && createPage({
+      //     path: `/${slugify(city.toLowerCase())}/${district == '#' ? '' : slugify(district.toLowerCase())+'/'}${slugify(neighborhood.toLowerCase())}`,
+      //     component: './src/templates/List.vue',
+      //     context: {
+      //       city,
+      //       units: cities[`${city}_${district == '#' ? '' : district + '_'}${neighborhood}`],
+      //       hero: true,
+      //       searchType: 'neighborhood',
+      //     },
+      //   });
+      // });
+
+      allUnits.forEach(unit => {
+        createPage({
+          path: `/${unit.slug}`,
           component: './src/templates/Detail.vue',
           context: {
-            id: item.node.id
+            id: unit.id,
+            ...unit,
+            allUnits
           }
         })
       })

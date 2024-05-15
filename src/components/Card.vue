@@ -45,12 +45,12 @@
         <div class="data">
             <h1 v-if="!rented" class="price">{{ $formatCurrency(cardData.cost) }}</h1>
             <div class="location">
-                <Location/> Piso en {{ cardData.neighborhood }}, {{ cardData.town }}
+                <Location/> Piso en {{ cardData.location.neighborhood }}, {{ cardData.location.town }}
             </div>
             <div v-if="size=='sm'" class="features">
-                <span>{{ cardData.habs }} habs.</span>
+                <span>{{ cardData.bedrooms }} habs.</span>
                 <span>{{ cardData.bathrooms }} baños</span>
-                <span>{{ cardData.m2 }}m<sup>2</sup></span>
+                <span>{{ cardData.area }}m<sup>2</sup></span>
             </div>
             <div v-if="size=='md'" class="features">
                 <Feature icon="room"     :line1="bedrooms" />
