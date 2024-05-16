@@ -99,12 +99,12 @@
             <div class="same-neighborhood-header">
                 <h1 class="title">Otros inmuebles en {{ $context.location.neighborhood }}</h1>
                 <div class="buttons">
-                    <RoundButton icon="left" />
-                    <RoundButton icon="right" />
+                    <RoundButton v-if="sameNeighborhoodIndex > 0" icon="left" @clicked="decrementSameNeighborhood"/>
+                    <RoundButton v-if="sameNeighborhoodIndex < (sameNeighborhoodPages - 1)" icon="right" @clicked="incrementSameNeighborhood"/>
                 </div>
             </div>
-            <div class="cards-overflow">
-                <div class="cards">
+            <div class="cards-overflow" ref="same-neighborhood">
+                <div class="cards" :style="{transform: `translateX(${-sameNeighborhoodIndex*neighborhoodGalleriesWidth}px)`}">
                     <Card v-for="unit, i in this.sameNeighborhood"
                         :key="`same_${i}`" 
                         :index="i" 
@@ -123,13 +123,13 @@
                     </div>
                 </h1>
                 <div class="buttons">
-                    <RoundButton icon="left" />
-                    <RoundButton icon="right" />
+                    <RoundButton v-if="historyIndex > 0 " icon="left" @clicked="decrementHistory"/>
+                    <RoundButton v-if="historyIndex < (historyIndex - 1) " icon="right" @clicked="incrementHistory"/>
                 </div>
             </div>
 
-            <div class="cards-overflow">
-                <div class="cards">
+            <div class="cards-overflow" ref="history">
+                <div class="cards" :style="{transform: `translateX(${-historyIndex*historyGalleriesWidth}px)`}">
                     <Card v-for="unit, i in this.sameNeighborhoodRented"
                         :key="`same_${i}`" 
                         :index="i" 
@@ -210,6 +210,13 @@ export default {
             type: 'detail',
             screenHeight: 0,
             screenWidth: 0,
+
+            neighborhoodGalleriesWidth: 0,
+            historyGalleriesWidth: 0,
+            historyIndex: 0,
+            sameNeighborhoodIndex: 0,
+            historyPages: 0,
+            sameNeighborhoodPages: 0,
 
             galleryIndexStart: 0,
             showGallery: false,
@@ -436,13 +443,13 @@ export default {
         sameNeighborhood() {
             return this.$context.allUnits.filter(unit => {
                 return unit.location.neighborhood == this.$context.location.neighborhood && unit.location.town == this.$context.location.town
-            }).slice(0,4)
+            })
         },
 
         sameNeighborhoodRented() {
             return this.$context.allUnits.filter(unit => {
                 return unit.location.neighborhood == this.$context.location.neighborhood && unit.location.town == this.$context.location.town && !unit.isActive && unit.renting 
-            }).slice(0,4)
+            })
         }
         
 
@@ -494,12 +501,51 @@ export default {
         updateDimensions() {
             this.screenWidth  = window.innerWidth;
             this.screenHeight = window.innerHeight;
+
+            if(this.$refs['history']){
+                this.historyGalleriesWidth = this.$refs['history'].clientWidth;
+            }
+            if(this.$refs['same-neighborhood']){
+                this.neighborhoodGalleriesWidth = this.$refs['same-neighborhood'].clientWidth;
+            }
+
         },
+
+        incrementSameNeighborhood(){
+            const pages = Math.ceil(this.$refs['same-neighborhood'].childNodes[0].clientWidth / this.$refs['same-neighborhood'].clientWidth)
+            if (this.sameNeighborhoodIndex < pages - 1){
+                this.sameNeighborhoodIndex = this.sameNeighborhoodIndex + 1;
+            }
+        },
+
+        decrementSameNeighborhood(){
+            if (this.sameNeighborhoodIndex > 0){
+                this.sameNeighborhoodIndex = this.sameNeighborhoodIndex - 1;
+            }
+        },
+        
+        incrementHistory() {
+            const pages = Math.ceil(this.$refs['history'].childNodes[0].clientWidth / this.$refs['history'].clientWidth)
+            if (this.historyIndex < pages - 1){
+                this.historyIndex = this.historyIndex + 1;
+            }
+        },
+
+        decrementHistory() {
+            if (this.historyIndex > 0){
+                this.historyIndex = this.historyIndex - 1;
+            }
+        },
+
+        setCarrouselsData() {
+            this.historyPages = this.$refs['history'] ? Math.ceil(this.$refs['history'].childNodes[0].clientWidth / this.$refs['history'].clientWidth) : 0
+            this.sameNeighborhoodPages = this.$refs['same-neighborhood'] ? Math.ceil(this.$refs['same-neighborhood'].childNodes[0].clientWidth / this.$refs['same-neighborhood'].clientWidth) : 0
+
+        }
     },
 
     mounted() {
 
-        console.log(this.$context )
 
         this.mapLoader = new Loader({
             apiKey: process.env.GRIDSOME_MAPS_API_KEY,
@@ -513,6 +559,9 @@ export default {
         });
 
         this.updateDimensions();
+        this.setCarrouselsData();
+    
+
         window.addEventListener('resize', this.updateDimensions);
     },
 
@@ -719,10 +768,20 @@ export default {
         justify-content: space-between;
     }
 
+    .cards-overflow{
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: visible;
+        padding-block: 5px;
+    }
+
     .cards {
+        transition: transform 0.3s ease;
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: stretch;
+        gap: 10px;
+        width: max-content;
     }
 
     .buttons {
@@ -785,7 +844,7 @@ export default {
 
     .cards-overflow{
         width: 100%;
-        overflow-x: scroll;
+        overflow-x: scroll !important;
         overflow-y: visible;
         padding: 5px;
     }
